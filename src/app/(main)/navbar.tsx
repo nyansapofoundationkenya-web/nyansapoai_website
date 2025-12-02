@@ -117,6 +117,12 @@ export default function Navbar() {
                     >
                       <span className="">Contact Us</span>
                     </Link>
+                    <Link
+                      href="/request-demo"
+                      className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
+                    >
+                      <span className="">Request Demo</span>
+                    </Link>
                     <div className="flex flex-col my-2 gap-4 px-2">
                       <a
                         href="/getstarted"
@@ -197,9 +203,15 @@ export default function Navbar() {
         <div className="hidden  space-x-2 lg:flex">
           <Link
             href="/contact"
-            className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
+            className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500 focus:outline-none"
           >
             <span className="">Contact Us</span>
+          </Link>
+          <Link
+            href="/request-demo"
+            className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500 focus:outline-none"
+          >
+            <span className="">Request Demo</span>
           </Link>
           <CTAButton />
           <Link

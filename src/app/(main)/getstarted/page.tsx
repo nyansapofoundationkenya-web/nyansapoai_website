@@ -77,7 +77,7 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
   const getExternalUrl = (idx: number) => {
     switch (idx) {
       case 0:
-        return "https://nyansapo-teaching-dashboard.vercel.app/"
+        return "https://nyansapofoundation-teaching-dashboa.vercel.app/"
       case 1:
         return "https://hekima-dashboard.vercel.app/auth/signin"
       default:

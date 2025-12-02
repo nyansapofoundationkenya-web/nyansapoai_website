@@ -1,55 +1,13 @@
-import { sanityClient } from "@/lib/sanity.client"
-import { cache } from "react"
-import { groq } from "next-sanity"
-import type { Metadata } from "next"
+import { Metadata } from "next"
 import Image from "next/image"
+import { featuredPartners } from "@/data/featuredPartners"
 
 export const metadata: Metadata = {
   title: "Featured Partners",
   description: "Organizations and publications featuring Nyansapo",
 }
 
-// Enable NextJS to cache and dedupe queries
-const clientFetch = cache(sanityClient.fetch.bind(sanityClient))
-
-// Query for featured items
-const featuredQuery = groq`*[_type=='news' && isFeatured == true] | order(publishedAt desc, _createdAt desc) {
-  title, 
-  link, 
-  _id,
-  mainImage {
-    asset -> {
-      ...,
-      metadata {
-        lqip
-      },
-      url
-    }
-  }
-}`
-
-export interface FeaturedInterface {
-  title: string
-  link: string
-  _id: string
-  mainImage: {
-    _type: string
-    asset: {
-      _id: string
-      _type: string
-      metadata: {
-        lqip: string
-      }
-      url: string
-    }
-  }
-}
-
-export const revalidate = 60 * 60
-
-export default async function News() {
-  const featuredData = await clientFetch<FeaturedInterface[]>(featuredQuery)
-
+export default function News() {
   return (
     <div
       id="Resources"
@@ -59,35 +17,29 @@ export default async function News() {
         Featured By
       </h2>
 
-      {featuredData.length > 0 ? (
+      {featuredPartners.length > 0 ? (
         <div className="mb-8 lg:mb-12">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 items-center">
-            {featuredData.map((item) => (
+            {featuredPartners.map((partner) => (
               <a
-                key={item._id}
-                href={item.link}
+                key={partner.id}
+                href={partner.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group hover:opacity-90 transition-all duration-300 h-24 flex items-center justify-center"
-                title={item.title}
+                title={partner.title}
               >
-                {item.mainImage?.asset?.url && (
-                  <div className="w-full h-full relative flex items-center justify-center">
-                    <Image
-                      src={item.mainImage.asset.url}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                      className="object-contain group-hover:scale-105 transition-transform duration-300"
-                      placeholder={
-                        item.mainImage.asset.metadata.lqip ? "blur" : "empty"
-                      }
-                      blurDataURL={
-                        item.mainImage.asset.metadata.lqip || undefined
-                      }
-                    />
-                  </div>
-                )}
+                <div className="w-full h-full relative flex items-center justify-center">
+                  <Image
+                    src={partner.imageUrl}
+                    alt={partner.altText || partner.title}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
+                    unoptimized={false} // Remove if you want Next.js image optimization
+                    priority={false} // Only set to true for above-the-fold images
+                  />
+                </div>
               </a>
             ))}
           </div>
