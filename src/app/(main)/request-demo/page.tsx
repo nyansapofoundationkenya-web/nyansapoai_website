@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle2, Calendar, Users, User } from "lucide-react"
+import { CheckCircle2, Calendar, Users, User, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function RequestDemoPage() {
   const [formData, setFormData] = useState({
@@ -38,6 +39,7 @@ export default function RequestDemoPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -55,18 +57,46 @@ export default function RequestDemoPage() {
         [name]: value
       }))
     }
+    
+    // Clear error when user starts typing
+    if (error) setError(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    console.log("Demo request submitted:", formData)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/getstarted', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          // Ensure otherOrganizationType is included only when "Other" is selected
+          otherOrganizationType: formData.organizationType === "Other" ? formData.otherOrganizationType : "",
+          // Ensure otherRole is included only when "Other" is selected in roles
+          otherRole: formData.roles.includes("Other") ? formData.otherRole : ""
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || result.details?.[0]?.message || 'Failed to submit request')
+      }
+
+      setIsSubmitted(true)
+      console.log("Demo request submitted successfully:", result)
+      
+    } catch (error: any) {
+      console.error("Error submitting demo request:", error)
+      setError(error.message || "Failed to submit request. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const organizationTypes = [
@@ -92,6 +122,14 @@ export default function RequestDemoPage() {
     "Swahili"
   ]
 
+  const getTodayDate = () => {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted pt-24 pb-16">
@@ -109,23 +147,34 @@ export default function RequestDemoPage() {
               </CardDescription>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  We'll contact you at <strong>{formData.email}</strong> to confirm your preferred time.
+                  We've sent a confirmation email to <strong>{formData.email}</strong> and will contact you there to confirm your preferred time.
                 </p>
-                <Button 
-                  onClick={() => {
-                    setIsSubmitted(false)
-                    setFormData({ 
-                      name: "", email: "", phone: "", 
-                      organizationType: "", otherOrganizationType: "", organizationName: "",
-                      numberOfLearners: "", numberOfAttendees: "",
-                      roles: [], otherRole: "",
-                      assessmentChallenges: "", preferredLanguage: "", preferredDate: "", preferredTime: ""
-                    })
-                  }}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                >
-                  Request Another Demo
-                </Button>
+                <div className="pt-4">
+                  <Button 
+                    onClick={() => {
+                      setIsSubmitted(false)
+                      setFormData({ 
+                        name: "", 
+                        email: "", 
+                        phone: "", 
+                        organizationType: "", 
+                        otherOrganizationType: "", 
+                        organizationName: "",
+                        numberOfLearners: "", 
+                        numberOfAttendees: "",
+                        roles: [], 
+                        otherRole: "",
+                        assessmentChallenges: "", 
+                        preferredLanguage: "", 
+                        preferredDate: "", 
+                        preferredTime: ""
+                      })
+                    }}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    Request Another Demo
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -157,6 +206,15 @@ export default function RequestDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Personal Information */}
               <div className="space-y-6">
@@ -178,6 +236,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="Enter your full name"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -194,6 +253,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="Enter your work email"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -210,6 +270,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="Enter your phone number"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -232,7 +293,8 @@ export default function RequestDemoPage() {
                       required
                       value={formData.organizationType}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
+                      className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-background disabled:opacity-50"
+                      disabled={isSubmitting}
                     >
                       <option value="">Select organization type</option>
                       {organizationTypes.map(type => (
@@ -250,11 +312,12 @@ export default function RequestDemoPage() {
                         id="otherOrganizationType"
                         name="otherOrganizationType"
                         type="text"
-                        required
+                        required={formData.organizationType === "Other"}
                         value={formData.otherOrganizationType}
                         onChange={handleChange}
                         placeholder="Specify organization type"
                         className="border-border focus:ring-primary"
+                        disabled={isSubmitting}
                       />
                     </div>
                   )}
@@ -272,6 +335,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="Enter your organization name"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -295,6 +359,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="e.g., 500 learners"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -311,6 +376,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="Number of people attending"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -331,7 +397,9 @@ export default function RequestDemoPage() {
                         value={role}
                         checked={formData.roles.includes(role)}
                         onChange={handleChange}
-                        className="rounded border-border text-primary focus:ring-primary"
+                        className="rounded border-border text-primary focus:ring-primary disabled:opacity-50"
+                        disabled={isSubmitting}
+                        required={formData.roles.length === 0}
                       />
                       <Label htmlFor={`role-${role}`} className="text-foreground">
                         {role}
@@ -353,6 +421,7 @@ export default function RequestDemoPage() {
                       onChange={handleChange}
                       placeholder="Specify attendee roles"
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
                 )}
@@ -377,6 +446,7 @@ export default function RequestDemoPage() {
                     onChange={handleChange}
                     placeholder="Describe your current challenges with student assessments..."
                     className="border-border focus:ring-primary resize-none"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -391,7 +461,8 @@ export default function RequestDemoPage() {
                       required
                       value={formData.preferredLanguage}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
+                      className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-background disabled:opacity-50"
+                      disabled={isSubmitting}
                     >
                       <option value="">Select language</option>
                       {languages.map(language => (
@@ -412,6 +483,8 @@ export default function RequestDemoPage() {
                       value={formData.preferredDate}
                       onChange={handleChange}
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
+                      min={getTodayDate()}
                     />
                   </div>
 
@@ -427,29 +500,32 @@ export default function RequestDemoPage() {
                       value={formData.preferredTime}
                       onChange={handleChange}
                       className="border-border focus:ring-primary"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 text-lg"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
-                    Submitting Request...
-                  </>
-                ) : (
-                  "Schedule Demo"
-                )}
-              </Button>
+              <div className="space-y-4">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground mr-2" />
+                      Submitting Request...
+                    </>
+                  ) : (
+                    "Schedule Demo"
+                  )}
+                </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
-                We'll contact you to confirm your demo schedule. By submitting, you agree to our Privacy Policy.
-              </p>
+                <p className="text-xs text-muted-foreground text-center">
+                  We'll contact you to confirm your demo schedule. By submitting, you agree to our Privacy Policy.
+                </p>
+              </div>
             </form>
           </CardContent>
         </Card>

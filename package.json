@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-  "node": "22.x"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -58,6 +58,7 @@
     "next-sanity-image": "6.0.0",
     "next-sitemap": "3.1.47",
     "next-themes": "0.2.1",
+    "nodemailer": "^7.0.11",
     "pdfjs-dist": "^5.4.394",
     "react": "18.2.0",
     "react-confetti": "6.1.0",
@@ -71,15 +72,16 @@
     "styled-components": "5.3.9",
     "tailwind-merge": "1.14.0",
     "tailwindcss-animate": "1.0.6",
-    "typescript": "5.1.6",
-    "zod": "3.21.4"
+    "typescript": "5.1.6"
   },
   "devDependencies": {
     "@sanity/types": "3.9.0",
     "@types/lodash": "4.14.201",
+    "@types/nodemailer": "^7.0.4",
     "autoprefixer": "10.4.13",
     "postcss": "8.4.21",
     "tailwind-scrollbar": "3.0.5",
-    "tailwindcss": "3.2.4"
+    "tailwindcss": "3.2.4",
+    "zod": "3.21.4"
   }
 }

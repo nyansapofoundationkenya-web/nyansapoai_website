@@ -1,10 +1,10 @@
+// TutorChat.tsx
 "use client"
 import React, { useState } from "react"
 import { TutorChatProps, FormData } from "./types"
 import WelcomeSection from "./components/WelcomeSection"
 import HekimaForm from "./forms/HekimaForm"
 import NyansapoForm from "./forms/NyansapoForm"
-import { sendFormEmail } from "./services/emailService"
 
 const TutorChat: React.FC<TutorChatProps> = ({ ctaText, productSlug }) => {
   const [showForm, setShowForm] = useState(false)
@@ -37,6 +37,7 @@ const TutorChat: React.FC<TutorChatProps> = ({ ctaText, productSlug }) => {
       assessmentSupport: "",
       childrenCount: "",
       primaryCountry: "",
+      emailPhone: "", // Added email field
     }
   })
 
@@ -96,6 +97,7 @@ const TutorChat: React.FC<TutorChatProps> = ({ ctaText, productSlug }) => {
         assessmentSupport: "",
         childrenCount: "",
         primaryCountry: "",
+        emailPhone: "", // Added email field
       }
     })
   }
@@ -108,27 +110,32 @@ const TutorChat: React.FC<TutorChatProps> = ({ ctaText, productSlug }) => {
       setIsSubmitting(true)
       setSubmissionStatus(null)
 
-      // Send email
-      const success = await sendFormEmail(formData)
+      // Send form data to API
+      const response = await fetch('/api/tutor-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
 
-      if (success) {
-        setSubmissionStatus({
-          success: true,
-          message: "Thank you for your interest! We'll contact you soon.",
-        })
-        resetForm()
-      } else {
-        setSubmissionStatus({
-          success: false,
-          message:
-            "There was a problem submitting your form. Please try again.",
-        })
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || result.details?.[0]?.message || 'Failed to submit form')
       }
-    } catch (error) {
+
+      setSubmissionStatus({
+        success: true,
+        message: "Thank you for your interest! We'll contact you soon.",
+      })
+      resetForm()
+      
+    } catch (error: any) {
       console.error("Form submission error:", error)
       setSubmissionStatus({
         success: false,
-        message: "An unexpected error occurred. Please try again later.",
+        message: error.message || "There was a problem submitting your form. Please try again.",
       })
     } finally {
       setIsSubmitting(false)
@@ -167,28 +174,42 @@ const TutorChat: React.FC<TutorChatProps> = ({ ctaText, productSlug }) => {
             <div
               className={`p-4 rounded-md ${
                 submissionStatus.success
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
+                  ? "bg-green-100 text-green-800 border border-green-200"
+                  : "bg-red-100 text-red-800 border border-red-200"
               }`}
             >
-              {submissionStatus.message}
+              <p className="font-medium">
+                {submissionStatus.success ? "✅ Success!" : "❌ Error"}
+              </p>
+              <p className="mt-1 text-sm">{submissionStatus.message}</p>
             </div>
           )}
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`bg-yellow-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors ${
+              className={`${
+                formData.productType === "hekima" 
+                  ? "bg-yellow-500 hover:bg-yellow-600" 
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white px-6 py-3 rounded-md transition-colors font-medium ${
                 isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isSubmitting ? "Submitting..." : "Submit"}
+              {isSubmitting ? (
+                <>
+                  <span className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                  Submitting...
+                </>
+              ) : (
+                "Submit"
+              )}
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="bg-gray-200 text-gray-500 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors"
+              className="bg-gray-200 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-300 transition-colors font-medium"
               disabled={isSubmitting}
             >
               Back
