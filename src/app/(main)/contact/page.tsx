@@ -78,7 +78,7 @@ export default function Contact() {
         <title>Contact Nyansapo AI | Get in Touch</title>
         <meta 
           name="description" 
-          content="Contact Nyansapo AI team for inquiries, partnerships, and support. We're here to help transform education through AI-powered assessments." 
+          content="Contact Nyansapo AI team for inquiries, partnerships, and support. We&apos;re here to help transform education through AI-powered assessments." 
         />
       </Head>
       
@@ -93,7 +93,7 @@ export default function Contact() {
                 Message Sent Successfully!
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Thank you for reaching out to Nyansapo AI. We've sent a confirmation email and will get back to you within 24-48 hours.
+                Thank you for reaching out to Nyansapo AI. We&apos;ve sent a confirmation email and will get back to you within 24-48 hours.
               </p>
             </div>
 
@@ -115,7 +115,7 @@ export default function Contact() {
             <div className="bg-white p-8 flex flex-col">
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-[#1e293b] leading-tight mb-4">
-                  YOU'RE JUST ONE<br />CLICK AWAY
+                  YOU&apos;RE JUST ONE<br />CLICK AWAY
                 </h2>
                 <div className="w-20 h-1 bg-[#60a5fa] mb-8"></div>
                 
@@ -221,6 +221,7 @@ export default function Contact() {
                       className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
                       required
                       disabled={isSubmitting}
+                      placeholder="Enter your first name"
                     />
                   </div>
                   <div className="space-y-2">
@@ -235,6 +236,7 @@ export default function Contact() {
                       className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
                       required
                       disabled={isSubmitting}
+                      placeholder="Enter your last name"
                     />
                   </div>
                 </div>
@@ -252,6 +254,7 @@ export default function Contact() {
                       className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
                       required
                       disabled={isSubmitting}
+                      placeholder="Your company or organization"
                     />
                   </div>
                   <div className="space-y-2">
@@ -266,6 +269,7 @@ export default function Contact() {
                       onChange={handleChange}
                       className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
                       disabled={isSubmitting}
+                      placeholder="https://example.com"
                     />
                   </div>
                 </div>
@@ -274,16 +278,17 @@ export default function Contact() {
                   <Label htmlFor="email" className="text-white text-sm">
                     Email
                   </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
-                      required
-                      disabled={isSubmitting}
-                    />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
+                    required
+                    disabled={isSubmitting}
+                    placeholder="your.email@example.com"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -297,6 +302,7 @@ export default function Contact() {
                     onChange={handleChange}
                     className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg min-h-[120px] resize-none"
                     disabled={isSubmitting}
+                    placeholder="How can we help you?"
                   />
                 </div>
 

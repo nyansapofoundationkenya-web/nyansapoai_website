@@ -147,7 +147,7 @@ export default function RequestDemoPage() {
               </CardDescription>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  We've sent a confirmation email to <strong>{formData.email}</strong> and will contact you there to confirm your preferred time.
+                  We&apos;ve sent a confirmation email to <strong>{formData.email}</strong> and will contact you there to confirm your preferred time.
                 </p>
                 <div className="pt-4">
                   <Button 
@@ -192,7 +192,7 @@ export default function RequestDemoPage() {
             Request a Demo
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Schedule a personalized demo of Nyansapo AI's assessment platform
+            Schedule a personalized demo of Nyansapo AI&apos;s assessment platform
           </p>
         </div>
 
@@ -202,7 +202,7 @@ export default function RequestDemoPage() {
               Demo Request Form
             </CardTitle>
             <CardDescription className="text-muted-foreground">
-              Provide your details and we'll schedule a demo tailored to your needs
+              Provide your details and we&apos;ll schedule a demo tailored to your needs
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -523,7 +523,7 @@ export default function RequestDemoPage() {
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
-                  We'll contact you to confirm your demo schedule. By submitting, you agree to our Privacy Policy.
+                  We&apos;ll contact you to confirm your demo schedule. By submitting, you agree to our Privacy Policy.
                 </p>
               </div>
             </form>

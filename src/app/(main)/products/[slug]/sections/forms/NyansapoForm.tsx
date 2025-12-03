@@ -71,7 +71,7 @@ const NyansapoForm: React.FC<NyansapoFormProps> = ({
             placeholder="your.email@example.com"
           />
           <p className="text-sm text-gray-300 mt-1">
-            We'll send confirmation and updates to this email
+            We&apos;ll send confirmation and updates to this email
           </p>
         </div>
 
