@@ -1,3 +1,4 @@
+// News&Stories.tsx
 import { Metadata } from "next"
 import Image from "next/image"
 import { featuredPartners } from "@/data/featuredPartners"
@@ -5,6 +6,19 @@ import { featuredPartners } from "@/data/featuredPartners"
 export const metadata: Metadata = {
   title: "Featured Partners",
   description: "Organizations and publications featuring Nyansapo",
+}
+
+// Export the interface
+export interface FeaturedInterface {
+  title: string
+  link: string
+  mainImage: {
+    asset: {
+      metadata: {
+        lqip?: string
+      }
+    }
+  }
 }
 
 export default function News() {
@@ -36,8 +50,8 @@ export default function News() {
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                     className="object-contain group-hover:scale-105 transition-transform duration-300"
-                    unoptimized={false} // Remove if you want Next.js image optimization
-                    priority={false} // Only set to true for above-the-fold images
+                    unoptimized={false}
+                    priority={false}
                   />
                 </div>
               </a>

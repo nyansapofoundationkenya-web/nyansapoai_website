@@ -1,9 +1,22 @@
+// Preview.tsx
 "use client"
 import React from "react"
 import { useNextSanityImage } from "next-sanity-image"
 import { sanityClient } from "@/lib/sanity.client"
 import Image from "next/image"
-import { FeaturedInterface } from "./News&Stories"
+
+// Define the interface locally or import from a types file
+type FeaturedInterface = {
+  title: string
+  link: string
+  mainImage: {
+    asset: {
+      metadata: {
+        lqip?: string
+      }
+    }
+  }
+}
 
 type Props = {
   data: FeaturedInterface
