@@ -27,7 +27,7 @@ const Goals: React.FC = () => {
       title: "TEACHERS",
       image: "/imgs/gallery/9.jpg",
       description:
-        "Assessments with 'superhuman' precision. Enabling them to deliver the right level of tutoring to each learner based on the unique needs.",
+        "Assessments with 'superhuman' precision. Enabling them to deliver the right level of tutoring to each learner based on their unique needs.",
       color: "#4caf50", // Updated to requested hex color
       icon: "/icons/teachers-icon.svg", // Placeholder path, replace with actual icon
     },
