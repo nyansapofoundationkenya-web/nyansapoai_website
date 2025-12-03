@@ -72,4 +72,25 @@ export const featuredPartners: FeaturedPartner[] = [
     imageUrl: '/imgs/featured-partners/mastercard.png',
     altText: 'Mastercard Foundation'
   },
+  {
+    id: 'africanstartup',
+    title: 'African Start Up Conference',
+    link: 'https://www.linkedin.com/posts/nyansapo_nyansapoai-ai4good-africanstartupconference-activity-7138791019046756353-ggkb/',
+    imageUrl: '/imgs/featured-partners/africanstartup.jpeg',
+    altText: 'African Start Up Conference'
+  },
+  {
+    id: 'weare',
+    title: 'We Are The Family Foundation',
+    link: 'https://www.wearefamilyfoundation.org/yttf-the-creatives-2024/nyansapo-ai',
+    imageUrl: '/imgs/featured-partners/weare.png',
+    altText: 'We Are The Family Foundation'
+  },
+  {
+    id: 'global',
+    title: 'Global Solutions Summit',
+    link: 'https://www.youtube.com/watch?v=LS8PvY4_F5o',
+    imageUrl: '/imgs/featured-partners/globalsolutions.jpeg',
+    altText: 'Global Solutions Summit'
+  },
 ]

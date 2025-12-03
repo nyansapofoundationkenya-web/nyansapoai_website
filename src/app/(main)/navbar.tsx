@@ -111,12 +111,12 @@ export default function Navbar() {
                         </a>
                       )
                     )}
-                    <Link
+                    {/* <Link
                       href="/contact"
                       className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
                     >
                       <span className="">Contact Us</span>
-                    </Link>
+                    </Link> */}
                     <Link
                       href="/request-demo"
                       className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
@@ -133,7 +133,7 @@ export default function Navbar() {
                       >
                         Get Started
                       </a>
-                      <Link
+                      {/* <Link
                         href="/donate"
                         className={cn(
                           buttonVariants({ variant: "default" }),
@@ -141,7 +141,7 @@ export default function Navbar() {
                         )}
                       >
                         Donate
-                      </Link>
+                      </Link> */}
                     </div>
                     {/* <ThemeSwitch /> */}
                   </div>
@@ -201,12 +201,12 @@ export default function Navbar() {
         </div>
 
         <div className="hidden  space-x-2 lg:flex">
-          <Link
+          {/* <Link
             href="/contact"
             className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500 focus:outline-none"
           >
             <span className="">Contact Us</span>
-          </Link>
+          </Link> */}
           <Link
             href="/request-demo"
             className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500 focus:outline-none"
@@ -214,7 +214,7 @@ export default function Navbar() {
             <span className="">Request Demo</span>
           </Link>
           <CTAButton />
-          <Link
+          {/* <Link
             href="/donate"
             className={cn(
               buttonVariants({ variant: "default" }),
@@ -222,7 +222,7 @@ export default function Navbar() {
             )}
           >
             Donate
-          </Link>
+          </Link> */}
           {/* <ThemeSwitch /> */}
         </div>
       </nav>
