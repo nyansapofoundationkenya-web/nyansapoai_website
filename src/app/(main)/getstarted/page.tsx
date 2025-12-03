@@ -98,7 +98,7 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
         return {
           title: "Hekima Learning Dashboard",
           summary:
-            "Hekima Learning helps teachers identify learning gaps, group students based on their needs, and adjust instruction"
+            "Hekima Learning helps teachers identify learning gaps, group students based on their needs, and adjust instruction."
         }
       default:
         return {
