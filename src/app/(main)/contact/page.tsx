@@ -1,4 +1,4 @@
-// app/contact/page.tsx - Redesigned to match image
+// app/contact/page.tsx
 "use client"
 
 import { useState } from "react"
@@ -24,27 +24,93 @@ export default function Contact() {
     subject: "General Inquiry"
   })
 
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value
     }))
+    
+    // Clear validation error for this field
+    if (validationErrors[name]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
+    
     if (error) setError(null)
+  }
+
+  // Simple URL validation that accepts most formats
+  const isValidUrl = (url: string): boolean => {
+    if (!url.trim()) return true // Empty is valid (optional field)
+    
+    try {
+      // Try to create a URL object with the input
+      // Add protocol if missing
+      let testUrl = url.trim()
+      if (!testUrl.includes('://')) {
+        testUrl = 'http://' + testUrl
+      }
+      new URL(testUrl)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {}
+
+    // Required fields validation
+    if (!formData.firstName.trim()) errors.firstName = "First name is required"
+    if (!formData.lastName.trim()) errors.lastName = "Last name is required"
+    if (!formData.email.trim()) {
+      errors.email = "Email is required"
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address"
+    }
+    if (!formData.companyName.trim()) errors.companyName = "Organization name is required"
+
+    // Optional URL validation - only validate if there's content
+    if (formData.companyUrl.trim() && !isValidUrl(formData.companyUrl)) {
+      errors.companyUrl = "Please enter a valid website URL (e.g., example.com or https://example.com)"
+    }
+
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
     setIsSubmitting(true)
     setError(null)
 
     try {
+      // Clean up URL - add protocol if missing
+      let cleanedCompanyUrl = formData.companyUrl.trim()
+      if (cleanedCompanyUrl && !cleanedCompanyUrl.includes('://')) {
+        cleanedCompanyUrl = 'https://' + cleanedCompanyUrl
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          companyUrl: cleanedCompanyUrl || undefined // Send undefined if empty
+        }),
       })
 
       const result = await response.json()
@@ -120,7 +186,6 @@ export default function Contact() {
                 <div className="w-20 h-1 bg-[#60a5fa] mb-8"></div>
                 
                 <div className="flex items-start">
-                  {/* CONTACT US on left side of icons */}
                   <div className="rotate-180 mr-6" style={{ writingMode: 'vertical-rl' }}>
                     <h3 className="font-bold text-lg tracking-wider text-[#1e293b] whitespace-nowrap">
                       CONTACT US
@@ -128,7 +193,6 @@ export default function Contact() {
                   </div>
                   
                   <div className="space-y-6 flex-1">
-                    {/* Email */}
                     <div className="flex items-center gap-3">
                       <Mail className="h-5 w-5 text-[#60a5fa]" />
                       <a 
@@ -139,7 +203,6 @@ export default function Contact() {
                       </a>
                     </div>
 
-                    {/* Instagram */}
                     <div className="flex items-center gap-3">
                       <svg 
                         className="h-5 w-5 text-[#1e293b]" 
@@ -159,7 +222,6 @@ export default function Contact() {
                       </a>
                     </div>
 
-                    {/* LinkedIn */}
                     <div className="flex items-center gap-3">
                       <svg 
                         className="h-5 w-5 text-[#1e293b]" 
@@ -182,7 +244,6 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/* Optional decorative element at bottom */}
               <div className="mt-auto pt-8 border-t border-gray-200">
                 <p className="text-xs text-gray-500 text-center">
                   We typically respond within 24 hours
@@ -211,7 +272,7 @@ export default function Contact() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="firstName" className="text-white text-sm">
-                      First Name
+                      First Name *
                     </Label>
                     <Input
                       id="firstName"
@@ -223,10 +284,13 @@ export default function Contact() {
                       disabled={isSubmitting}
                       placeholder="Enter your first name"
                     />
+                    {validationErrors.firstName && (
+                      <p className="text-red-400 text-xs mt-1">{validationErrors.firstName}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName" className="text-white text-sm">
-                      Last Name
+                      Last Name *
                     </Label>
                     <Input
                       id="lastName"
@@ -238,13 +302,16 @@ export default function Contact() {
                       disabled={isSubmitting}
                       placeholder="Enter your last name"
                     />
+                    {validationErrors.lastName && (
+                      <p className="text-red-400 text-xs mt-1">{validationErrors.lastName}</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="companyName" className="text-white text-sm">
-                      Organization name
+                      Organization name *
                     </Label>
                     <Input
                       id="companyName"
@@ -256,27 +323,32 @@ export default function Contact() {
                       disabled={isSubmitting}
                       placeholder="Your company or organization"
                     />
+                    {validationErrors.companyName && (
+                      <p className="text-red-400 text-xs mt-1">{validationErrors.companyName}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="companyUrl" className="text-white text-sm">
-                      Organization Website
+                      Organization Website (Optional)
                     </Label>
                     <Input
                       id="companyUrl"
                       name="companyUrl"
-                      type="url"
                       value={formData.companyUrl}
                       onChange={handleChange}
                       className="bg-[#3d4d66] border-0 text-white placeholder:text-gray-400 rounded-lg h-12"
                       disabled={isSubmitting}
-                      placeholder="https://example.com"
+                      placeholder="example.com or https://example.com"
                     />
+                    {validationErrors.companyUrl && (
+                      <p className="text-red-400 text-xs mt-1">{validationErrors.companyUrl}</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-white text-sm">
-                    Email
+                    Email *
                   </Label>
                   <Input
                     id="email"
@@ -289,11 +361,14 @@ export default function Contact() {
                     disabled={isSubmitting}
                     placeholder="your.email@example.com"
                   />
+                  {validationErrors.email && (
+                    <p className="text-red-400 text-xs mt-1">{validationErrors.email}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-white text-sm">
-                    Message
+                    Message (Optional)
                   </Label>
                   <Textarea
                     id="message"
