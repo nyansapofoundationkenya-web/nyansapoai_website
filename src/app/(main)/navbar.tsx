@@ -23,9 +23,11 @@ import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CTAButton } from "./CTAButton"
 
+
 export default function Navbar() {
   const [{ x, y }, scrollTo] = useWindowScroll()
   const [addBg, setAddBg] = useState(false)
+   const [isOpen, setIsOpen] = useState(false)
   useEffect(() => {
     if (y && y > 500) {
       setAddBg(true)
@@ -117,12 +119,12 @@ export default function Navbar() {
                     >
                       <span className="">Contact Us</span>
                     </Link> */}
-                    <Link
+                    {/* <Link
                       href="/request-demo"
                       className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
                     >
                       <span className="">Request Demo</span>
-                    </Link>
+                    </Link> */}
                     <div className="flex flex-col my-2 gap-4 px-2">
                       <a
                         href="/getstarted"
@@ -133,6 +135,14 @@ export default function Navbar() {
                       >
                         Get Started
                       </a>
+                       <button
+                        onClick={() => setIsOpen(true)}
+                        className="text-accent2 border-2 px-4 py-2 rounded-md border-accent2 flex gap-x-3 items-center"
+                      >
+                        <Link href="/request-demo" className={cn()}>
+                          Request a Demo
+                        </Link>
+                      </button>
                       {/* <Link
                         href="/donate"
                         className={cn(
@@ -207,13 +217,15 @@ export default function Navbar() {
           >
             <span className="">Contact Us</span>
           </Link> */}
-          <Link
-            href="/request-demo"
-            className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500 focus:outline-none"
-          >
-            <span className="">Request Demo</span>
-          </Link>
           <CTAButton />
+          <button
+                        onClick={() => setIsOpen(true)}
+                        className="text-accent2 border-2 px-4 py-2 rounded-md border-accent2 flex gap-x-3 items-center"
+                      >
+                        <Link href="/request-demo" className={cn()}>
+                          Request a Demo
+                        </Link>
+                      </button>
           {/* <Link
             href="/donate"
             className={cn(
