@@ -1,3 +1,4 @@
+// src/app/(main)/RootLayout.tsx
 import Navbar from "./navbar"
 import "@/app/globals.css"
 import "@fortawesome/fontawesome-free/css/all.min.css"
@@ -9,28 +10,21 @@ import { Separator } from "@/components/ui/separator"
 import RootProviders from "../providers"
 import { Toaster } from "react-hot-toast"
 import { Anton } from "next/font/google"
+import Script from "next/script"   // ✅ Import Script
 
 const raleway = Raleway({
   subsets: ["latin"],
-  // default, can also use "swap" to ensure custom font always shows
   display: "optional",
 })
-// const alegreya = Alegreya_Sans({
-//   subsets: ['latin'],
-//   // default, can also use "swap" to ensure custom font always shows
-//   variable: '--font-alegreya',
-//   display: 'optional',
-//   weight: '400',
-// })
 
 const anton = Anton({
   weight: "400",
   subsets: ["latin"],
 })
+
 export const metadata: Metadata = {
   title: "Nyansapo AI",
-  description:
-    "Supporting literacy and numeracy catch-up interventions using AI",
+  description: "Supporting literacy and numeracy catch-up interventions using AI",
   keywords: [
     "nyansapoAI",
     "nyansapo AI",
@@ -60,14 +54,26 @@ export const metadata: Metadata = {
     },
   },
 }
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`scroll-smooth ${raleway.className}`}>
-      <body className=" dark relative bg-background duration-400">
+      <head>
+        {/* Google Analytics */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-34V2V8JHZ0"
+        />
+        <Script id="google-analytics">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-34V2V8JHZ0');
+          `}
+        </Script>
+      </head>
+      <body className="dark relative bg-background duration-400">
         <RootProviders>
           <Toaster />
           <Navbar />
