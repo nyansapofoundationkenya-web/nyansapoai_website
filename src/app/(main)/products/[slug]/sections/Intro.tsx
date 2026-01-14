@@ -92,7 +92,7 @@ const CurriculumHero = ({ product }: ProductProps) => {
                   )
                 } else {
                   window.open(
-                    "https://hekima-dashboard.vercel.app/auth/signin",
+                    "https://hekima-dashboard-pi.vercel.app/",
                     "_blank"
                   )
                 }

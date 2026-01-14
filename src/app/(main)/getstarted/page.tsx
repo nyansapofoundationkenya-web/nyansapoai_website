@@ -79,7 +79,7 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
       case 0:
         return "https://nyansapofoundation-teaching-dashboa.vercel.app/"
       case 1:
-        return "https://hekima-dashboard.vercel.app/auth/signin"
+        return "https://hekima-dashboard-pi.vercel.app/"
       default:
         return "#"
     }
