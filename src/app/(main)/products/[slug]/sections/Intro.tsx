@@ -87,7 +87,7 @@ const CurriculumHero = ({ product }: ProductProps) => {
               onClick={() => {
                 if (product.slug?.current === "nyansapo-ai-android-app") {
                   window.open(
-                    "https://nyansapo-teaching-dashboard.vercel.app/",
+                    "https://nyansapofoundation-teaching-dashboa.vercel.app/",
                     "_blank"
                   )
                 } else {
