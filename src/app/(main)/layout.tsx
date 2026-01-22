@@ -1,4 +1,3 @@
-// src/app/(main)/RootLayout.tsx
 import Navbar from "./navbar"
 import "@/app/globals.css"
 import "@fortawesome/fontawesome-free/css/all.min.css"
@@ -10,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import RootProviders from "../providers"
 import { Toaster } from "react-hot-toast"
 import { Anton } from "next/font/google"
-import Script from "next/script"   // ✅ Import Script
+import Script from "next/script"
 
 const raleway = Raleway({
   subsets: ["latin"],
