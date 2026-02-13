@@ -12,33 +12,50 @@ const Mission = () => {
   return (
     <section className="relative text-white overflow-hidden">
       <div className="container mx-auto px-6 py-20 lg:py-32 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
-        {/* Left: Text content in bordered card (TALLER) */}
+        {/* Left: Text content in bordered card */}
         <motion.div
-          className="flex flex-col gap-6 p-10 rounded-3xl border border-white/20 bg-white/5 backdrop-blur-sm flex-shrink-0 w-full max-w-sm lg:w-[420px] h-[520px] lg:h-[540px] justify-center"
+          className="flex flex-col p-10 rounded-3xl border-2 border-white/20 bg-white/5 backdrop-blur-sm flex-shrink-0 w-full max-w-lg lg:w-[580px] h-[520px] lg:h-[540px] justify-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
+          {/* Mission Title */}
           <h1
-            className={`text-5xl sm:text-6xl font-bold uppercase leading-tight text-center ${anton.className}`}
+            className={`text-6xl lg:text-7xl font-bold uppercase leading-none mb-12 lg:mb-16 ${anton.className}`}
           >
             OUR <span className="text-yellow-400">MISSION</span>
           </h1>
 
-          <p className="text-2xl sm:text-3xl font-medium leading-relaxed text-center">
-            We aim to realize the full
-            <br />
-            &nbsp;&nbsp;potential of technology
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;to drive development
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and productivity in
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;communities.
-          </p>
+          {/* Mission Text with progressive indentation */}
+          <div className="space-y-4 lg:space-y-6">
+            {/* First line - no indent */}
+            <p className="text-3xl lg:text-4xl font-medium leading-tight">
+              We aim to realize the full
+            </p>
+            
+            {/* Second line - small indent */}
+            <p className="text-3xl lg:text-4xl font-medium leading-tight ml-6 lg:ml-8">
+              potential of technology
+            </p>
+            
+            {/* Third line - medium indent */}
+            <p className="text-3xl lg:text-4xl font-medium leading-tight ml-12 lg:ml-16">
+              to drive development
+            </p>
+            
+            {/* Fourth line - large indent */}
+            <p className="text-3xl lg:text-4xl font-medium leading-tight ml-18 lg:ml-24">
+              and productivity in
+            </p>
+            
+            {/* Fifth line - extra large indent */}
+            <p className="text-3xl lg:text-4xl font-medium leading-tight ml-24 lg:ml-32">
+              communities.
+            </p>
+          </div>
         </motion.div>
 
-        {/* Right: Devices image (SLIGHTLY SHORTER) */}
+        {/* Right: Devices image */}
         <motion.div
           className="relative w-full max-w-md lg:max-w-lg flex items-center justify-center"
           initial={{ opacity: 0, scale: 0.92 }}

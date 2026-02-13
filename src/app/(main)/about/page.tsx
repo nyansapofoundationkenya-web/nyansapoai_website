@@ -29,7 +29,7 @@ export default function page({}: Props) {
     <div className="text-dark dark:text-white mt-20 px-8 md:px-16 xl:px-32 2xl:px-64 mx-auto max-w-[1920px]">
       <Story />
       <Mission />
-      <Narration />
+      {/* <Narration /> */}
       <Goals />
       {/* <NewsLetter /> */}
     </div>
