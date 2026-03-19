@@ -2,20 +2,16 @@
 import Link from "next/link"
 import { Disclosure } from "@headlessui/react"
 import Image from "next/image"
-import ThemeSwitch from "./components/ThemeSwitch"
 import { navigationLinks } from "@/constants/links"
-import { CTA_TEXT } from "@/constants"
 import { useWindowScroll } from "@uidotdev/usehooks"
 import { useEffect, useState } from "react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 
@@ -27,7 +23,8 @@ import { CTAButton } from "./CTAButton"
 export default function Navbar() {
   const [{ x, y }, scrollTo] = useWindowScroll()
   const [addBg, setAddBg] = useState(false)
-   const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  
   useEffect(() => {
     if (y && y > 500) {
       setAddBg(true)
@@ -35,30 +32,39 @@ export default function Navbar() {
       setAddBg(false)
     }
   }, [y])
+  
+  // Helper function to format display names
+  const getDisplayName = (item: any) => {
+    if (item.displayName) return item.displayName;
+    return item.name.split('-').map((word: string) => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
   return (
     <div
       className={`w-[100vw] lg:w-full fixed ${
-        addBg ? "bg-background" : "bg-gradient-to-b from-black/90"
-      } text-white duration-200 via-50% top-0 left-0 z-50 `}
+        addBg ? "bg-background/95 backdrop-blur-md" : "bg-gradient-to-b from-black/80 via-black/50 to-transparent"
+      } text-foreground duration-200 top-0 left-0 z-50 shadow-sm`}
     >
-      <nav className=" relative flex flex-wrap py-2 px-4 gap-1 items-center justify-between  lg:justify-between ">
+      <nav className="relative flex flex-wrap py-3 px-6 gap-1 items-center justify-between lg:justify-between max-w-7xl mx-auto">
         {/* Logo  */}
         <Disclosure>
           {({ open }) => (
             <>
-              <div className="flex flex-wrap items-center backdrop-blur-sm justify-between w-full lg:w-auto">
-                <Link href="/" className=" ">
+              <div className="flex flex-wrap items-center justify-between w-full lg:w-auto">
+                <Link href="/" className="flex items-center">
                   <Image
                     src="/imgs/logos/nyansapo-logo.png"
-                    alt="N"
+                    alt="Nyansapo AI"
                     width="150"
                     height="150"
-                    className="rounded-sm"
+                    className="rounded-sm brightness-0 invert dark:invert-0"
                   />
                 </Link>
                 <Disclosure.Button
                   aria-label="Toggle Menu"
-                  className="px-2 py-1 ml-auto  rounded-md lg:hidden hover:text-cyan-500 focus:text-cyan-500 focus:bg-cyan-100 focus:outline-none  dark:focus:bg-cyan-700"
+                  className="px-2 py-1 ml-auto rounded-md lg:hidden hover:text-accent focus:text-accent focus:bg-accent/10 focus:outline-none dark:focus:bg-accent/20"
                 >
                   <svg
                     className="w-6 h-6 fill-current"
@@ -81,79 +87,79 @@ export default function Navbar() {
                   </svg>
                 </Disclosure.Button>
 
+                {/* Mobile Menu Panel */}
                 <Disclosure.Panel className="flex flex-wrap w-full my-5 lg:hidden">
-                  <div className="flex flex-col">
-                    {navigationLinks.map((item, index) =>
-                      item.type === "page" ? (
-                        <Link
-                          className="w-full capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
-                          key={index}
-                          href={`/${item.link ?? item.name}`}
-                        >
-                          {item.name}
-                        </Link>
-                      ) : item.type === "menu" &&
-                        Array.isArray(item.subMenu) ? (
-                        item.subMenu.map((sub: any, i: number) => (
-                          <Link
-                            className="hover:text-accent font-semibold capitalize px-2 py-1  "
-                            key={i}
-                            href={`/${sub.name}`}
+                  <div className="flex flex-col w-full bg-background/95 backdrop-blur-md rounded-lg p-4 shadow-xl border border-border">
+                    {navigationLinks.map((item, index) => {
+                      // Handle section type
+                      if (item.type === "section") {
+                        return (
+                          <div
+                            key={index}
+                            className="w-full capitalize px-2 py-2 text-muted-foreground font-semibold text-sm tracking-wider"
                           >
-                            {sub.name}
+                            {item.name}
+                          </div>
+                        );
+                      }
+                      // Handle page type
+                      else if (item.type === "page") {
+                        return (
+                          <Link
+                            className="w-full capitalize px-2 py-2 rounded-md font-medium hover:bg-accent/10 hover:text-accent transition-all duration-200"
+                            key={index}
+                            href={`/${item.link || item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                          >
+                            {item.name}
                           </Link>
-                        ))
-                      ) : (
-                        <a
-                          className="w-full px-2 capitalize py-1 rounded-md  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
-                          key={index}
-                          href={`/#${item.name}`}
-                        >
-                          {item.name}
-                        </a>
-                      )
-                    )}
-                    {/* <Link
-                      href="/contact"
-                      className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
-                    >
-                      <span className="">Contact Us</span>
-                    </Link> */}
-                    {/* <Link
-                      href="/request-demo"
-                      className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500  focus:outline-none "
-                    >
-                      <span className="">Request Demo</span>
-                    </Link> */}
-                    <div className="flex flex-col my-2 gap-4 px-2">
+                        );
+                      } 
+                      // Handle menu type with subMenu
+                      else if (item.type === "menu" && Array.isArray(item.subMenu)) {
+                        return (
+                          <div key={index} className="flex flex-col w-full">
+                            {/* Parent menu item - just a label, not clickable */}
+                            <div className="w-full capitalize px-2 py-2 rounded-md font-semibold text-foreground flex items-center justify-between">
+                              <span>{item.name}</span>
+                              <ChevronDown className="w-4 h-4" />
+                            </div>
+                            {/* Submenu items - these are the clickable links */}
+                            <div className="ml-4 flex flex-col border-l-2 border-border pl-3 space-y-1 mt-1">
+                              {item.subMenu.map((sub: any, i: number) => (
+                                <Link
+                                  className="px-3 py-2 rounded-md hover:bg-accent/10 hover:text-accent transition-all duration-200 font-medium"
+                                  key={i}
+                                  href={`/${sub.link || sub.name}`}
+                                >
+                                  {getDisplayName(sub)}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                    
+                    {/* Mobile CTA Buttons */}
+                    <div className="flex flex-col my-3 gap-3 px-2">
                       <a
                         href="/getstarted"
                         className={cn(
                           buttonVariants({ variant: "default" }),
-                          "text-lg   "
+                          "text-lg text-center bg-primary text-primary-foreground hover:bg-primary/90"
                         )}
                       >
                         Get Started
                       </a>
-                       <button
-                        onClick={() => setIsOpen(true)}
-                        className="text-accent2 border-2 px-4 py-2 rounded-md border-accent2 flex gap-x-3 items-center"
+                      <Link
+                        href="/request-demo"
+                        className="text-accent border-2 border-accent px-4 py-2.5 rounded-md hover:bg-accent hover:text-white transition-all duration-200 text-center font-medium"
+                        onClick={() => setIsOpen(false)}
                       >
-                        <Link href="/request-demo" className={cn()}>
-                          Request a Demo
-                        </Link>
-                      </button>
-                      {/* <Link
-                        href="/donate"
-                        className={cn(
-                          buttonVariants({ variant: "default" }),
-                          "text-lg bg-sky-500 hover:bg-sky-400 text-slate-100"
-                        )}
-                      >
-                        Donate
-                      </Link> */}
+                        Request a Demo
+                      </Link>
                     </div>
-                    {/* <ThemeSwitch /> */}
                   </div>
                 </Disclosure.Panel>
               </div>
@@ -161,81 +167,62 @@ export default function Navbar() {
           )}
         </Disclosure>
 
-        {/* menu  */}
+        {/* Desktop Menu */}
         <div className="hidden text-center lg:flex lg:items-center">
-          <ul className="items-center justify-end flex-1  list-none lg:pt-0 lg:flex">
+          <ul className="items-center justify-end flex-1 list-none lg:pt-0 lg:flex space-x-1">
             {navigationLinks.map((item, index) => (
-              <li className="mr-2" key={index}>
-                {item.type == "page" ? (
+              <li className="relative" key={index}>
+                {/* Handle section type */}
+                {item.type === "section" ? (
+                  <span className="w-full capitalize px-3 py-2 font-semibold text-muted-foreground text-sm tracking-wider">
+                    {item.name}
+                  </span>
+                ) : item.type === "page" ? (
                   <Link
-                    className="w-full capitalize px-2 py-1 font-semibold rounded-md hover:text-cyan-500 focus:text-cyan-500 focus:outline-none "
-                    key={index}
-                    href={`/${item.link ?? item.name}`}
+                    className="w-full capitalize px-3 py-2 font-medium rounded-md hover:text-accent transition-colors duration-200 inline-block"
+                    href={`/${item.link || item.name.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     {item.name}
                   </Link>
                 ) : item.type === "menu" ? (
                   <NavigationMenu className="bg-transparent">
                     <NavigationMenuItem>
-                      <NavigationMenuTrigger className="flex items-center gap-2 bg-transparent capitalize text-md font-semibold">
+                      <NavigationMenuTrigger className="flex items-center gap-1 bg-transparent hover:bg-accent/10 hover:text-accent capitalize text-md font-medium px-3 py-2 rounded-md transition-all duration-200">
                         {item.name}
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="flex bg-transparent flex-col p-1 gap-1">
-                        {item.subMenu?.map((subItem, index) => (
-                          <Link href={`/${subItem.name}`} key={index}>
-                            <NavigationMenuLink
-                              className={cn(
-                                navigationMenuTriggerStyle(),
-                                "bg-transparent capitalize text-md font-semibold w-full"
-                              )}
-                            >
-                              {subItem.name}
-                            </NavigationMenuLink>
-                          </Link>
-                        ))}
+                      <NavigationMenuContent>
+                        <div className="w-48 py-1 bg-popover border border-border rounded-lg shadow-lg">
+                          {item.subMenu?.map((subItem, index) => (
+                            <Link href={`/${subItem.link || subItem.name}`} key={index}>
+                              <NavigationMenuLink
+                                className={cn(
+                                  "block px-4 py-2.5 text-sm hover:bg-accent/10 hover:text-accent transition-colors duration-200",
+                                  "focus:outline-none focus:bg-accent/10 focus:text-accent"
+                                )}
+                              >
+                                {getDisplayName(subItem)}
+                              </NavigationMenuLink>
+                            </Link>
+                          ))}
+                        </div>
                       </NavigationMenuContent>
                     </NavigationMenuItem>
                   </NavigationMenu>
-                ) : (
-                  <a
-                    className="w-full capitalize px-2 py-1 rounded-md font-semibold  hover:text-cyan-500 focus:text-cyan-500 focus:outline-none "
-                    key={index}
-                    href={`/#${item.name}`}
-                  >
-                    {item.name}
-                  </a>
-                )}
+                ) : null}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="hidden  space-x-2 lg:flex">
-          {/* <Link
-            href="/contact"
-            className="capitalize px-2 py-1 rounded-md font-semibold hover:text-cyan-500 focus:text-cyan-500 focus:outline-none"
-          >
-            <span className="">Contact Us</span>
-          </Link> */}
+        {/* Desktop Right Side Buttons */}
+        <div className="hidden space-x-3 lg:flex items-center">
           <CTAButton />
-          <button
-                        onClick={() => setIsOpen(true)}
-                        className="text-accent2 border-2 px-4 py-2 rounded-md border-accent2 flex gap-x-3 items-center"
-                      >
-                        <Link href="/request-demo" className={cn()}>
-                          Request a Demo
-                        </Link>
-                      </button>
-          {/* <Link
-            href="/donate"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "text-lg bg-sky-500 hover:bg-sky-400 text-slate-100"
-            )}
+          <Link
+            href="/request-demo"
+            className="text-accent border-2 border-accent px-5 py-2 rounded-lg hover:bg-accent hover:text-white transition-all duration-200 font-medium"
           >
-            Donate
-          </Link> */}
-          {/* <ThemeSwitch /> */}
+            Request a Demo
+          </Link>
         </div>
       </nav>
     </div>
