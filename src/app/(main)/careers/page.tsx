@@ -26,11 +26,11 @@ export default function CareersPage() {
                 Careers at Nyansapo AI
               </span>
               <h1 className="text-5xl md:text-7xl font-headline font-extrabold text-foreground tracking-tighter leading-[1.1] mb-8">
-                Help Us Unlock Every Child's{" "}
+                Help Us Unlock Every Child&apos;s{" "}
                 <span className="italic" style={{ color: brandGreen }}>Potential.</span>
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-2xl font-light">
-                We're building AI-powered assessment tools that deliver measurable reading and math gains for 
+                We&apos;re building AI-powered assessment tools that deliver measurable reading and math gains for 
                 children across Africa. Join a passionate, multidisciplinary team working at the intersection 
                 of technology, education, and impact.
               </p>
@@ -50,7 +50,7 @@ export default function CareersPage() {
                 style={{ backgroundColor: brandGreen }}
               >
                 <p className="text-sm font-medium italic">
-                  "Education is the most powerful weapon which you can use to change the world."
+                  &quot;Education is the most powerful weapon which you can use to change the world.&quot;
                 </p>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function CareersPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: brandGreen }}>
-                    Marketing & Communications
+                    Marketing &amp; Communications
                   </span>
                   <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                     <MapPin className="w-3 h-3" /> Nairobi, Kenya / Remote
@@ -86,7 +86,7 @@ export default function CareersPage() {
                   Communications and Social Media Lead
                 </h3>
                 <p className="text-muted-foreground line-clamp-2 max-w-2xl">
-                  Shape the voice of Nyansapo AI. We're looking for a creative storyteller to manage our digital 
+                  Shape the voice of Nyansapo AI. We&apos;re looking for a creative storyteller to manage our digital 
                   presence and engage with our growing community of educators and partners.
                 </p>
               </div>
