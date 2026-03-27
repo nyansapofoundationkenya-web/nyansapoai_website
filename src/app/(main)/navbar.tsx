@@ -59,7 +59,7 @@ export default function Navbar() {
                     alt="Nyansapo AI"
                     width="150"
                     height="150"
-                    className="rounded-sm brightness-0 invert dark:invert-0"
+                    className="rounded-sm"
                   />
                 </Link>
                 <Disclosure.Button
