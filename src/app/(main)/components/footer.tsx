@@ -90,14 +90,14 @@ export default function Footer() {
               <span className="sr-only">Twitter</span>
               <Twitter />
             </a> */}
-            <a
+            {/* <a
               href="https://www.facebook.com/twivamwe?mibextid=ZbWKwL"
               target="_blank"
               rel="noopener noreferrer"
             >
               <span className="sr-only">Facebook</span>
               <Facebook />
-            </a>
+            </a> */}
             <a
               href="https://instagram.com/nyansapo_ai"
               target="_blank"
@@ -107,7 +107,7 @@ export default function Footer() {
               <Instagram />
             </a>
             <a
-              href="https://www.linkedin.com/showcase/nyansapo/"
+              href="https://www.linkedin.com/company/nyansapoai/"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -1,13 +1,14 @@
 // app/careers/page.tsx
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, MapPin, ExternalLink } from "lucide-react"
+import { ArrowRight, MapPin, ExternalLink, XCircle } from "lucide-react"
 
 // Define the green color
 const brandGreen = "#4caf50"
 
 export default function CareersPage() {
   const applicationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSd8K1zfxJvw6QdhdiSRmxWEO_M5fDx6pyOJYhQ3mhaBDYMvgQ/viewform"
+  const isPositionOpen = false // Set this to false since the position is closed
 
   return (
     <main className="pt-20 bg-background">
@@ -71,8 +72,8 @@ export default function CareersPage() {
           </div>
 
           <div className="space-y-4">
-            {/* Communications and Social Media Lead - Only Position */}
-            <div className="group bg-card hover:bg-accent/5 transition-all p-8 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-border">
+            {/* Communications and Social Media Lead - Position Closed */}
+            <div className="group bg-card hover:bg-accent/5 transition-all p-8 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-border opacity-80">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: brandGreen }}>
@@ -82,22 +83,37 @@ export default function CareersPage() {
                     <MapPin className="w-3 h-3" /> Nairobi, Kenya / Remote
                   </span>
                 </div>
-                <h3 className="text-2xl font-headline font-bold mb-3 text-foreground group-hover:text-[#4caf50] transition-colors">
+                <h3 className="text-2xl font-headline font-bold mb-3 text-foreground">
                   Communications and Social Media Lead
                 </h3>
                 <p className="text-muted-foreground line-clamp-2 max-w-2xl">
                   Shape the voice of Nyansapo AI. We&apos;re looking for a creative storyteller to manage our digital 
                   presence and engage with our growing community of educators and partners.
                 </p>
+                {!isPositionOpen && (
+                  <div className="mt-3">
+                    <span className="inline-flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                      <XCircle className="w-4 h-4" />
+                      This position is now closed
+                    </span>
+                  </div>
+                )}
               </div>
-              <a
-                href={applicationFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 font-bold text-[#4caf50] group-hover:gap-4 transition-all"
-              >
-                Apply Now <ExternalLink className="w-4 h-4" />
-              </a>
+              {isPositionOpen ? (
+                <a
+                  href={applicationFormUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 font-bold text-[#4caf50] group-hover:gap-4 transition-all"
+                >
+                  Apply Now <ExternalLink className="w-4 h-4" />
+                </a>
+              ) : (
+                <div className="flex items-center gap-2 font-bold text-muted-foreground bg-muted px-6 py-2 rounded-lg cursor-not-allowed">
+                  <XCircle className="w-4 h-4" />
+                  Applications Closed
+                </div>
+              )}
             </div>
           </div>
         </div>
