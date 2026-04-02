@@ -87,49 +87,38 @@ export default function Navbar() {
                   </svg>
                 </Disclosure.Button>
 
-                {/* Mobile Menu Panel */}
+                {/* Mobile Menu Panel - Using OLD WORKING PATTERN */}
                 <Disclosure.Panel className="flex flex-wrap w-full my-5 lg:hidden">
                   <div className="flex flex-col w-full bg-background/95 backdrop-blur-md rounded-lg p-4 shadow-xl border border-border">
                     {navigationLinks.map((item, index) => {
-                      // Handle section type
-                      if (item.type === "section") {
-                        return (
-                          <div
-                            key={index}
-                            className="w-full capitalize px-2 py-2 text-muted-foreground font-semibold text-sm tracking-wider"
-                          >
-                            {item.name}
-                          </div>
-                        );
-                      }
-                      // Handle page type
-                      else if (item.type === "page") {
+                      // Page type
+                      if (item.type === "page") {
                         return (
                           <Link
                             className="w-full capitalize px-2 py-2 rounded-md font-medium hover:bg-accent/10 hover:text-accent transition-all duration-200"
                             key={index}
                             href={`/${item.link || item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            onClick={() => setIsOpen(false)}
                           >
                             {item.name}
                           </Link>
                         );
                       } 
-                      // Handle menu type with subMenu
+                      // Menu type with subMenu
                       else if (item.type === "menu" && Array.isArray(item.subMenu)) {
                         return (
                           <div key={index} className="flex flex-col w-full">
-                            {/* Parent menu item - just a label, not clickable */}
                             <div className="w-full capitalize px-2 py-2 rounded-md font-semibold text-foreground flex items-center justify-between">
                               <span>{item.name}</span>
                               <ChevronDown className="w-4 h-4" />
                             </div>
-                            {/* Submenu items - these are the clickable links */}
                             <div className="ml-4 flex flex-col border-l-2 border-border pl-3 space-y-1 mt-1">
                               {item.subMenu.map((sub: any, i: number) => (
                                 <Link
                                   className="px-3 py-2 rounded-md hover:bg-accent/10 hover:text-accent transition-all duration-200 font-medium"
                                   key={i}
                                   href={`/${sub.link || sub.name}`}
+                                  onClick={() => setIsOpen(false)}
                                 >
                                   {getDisplayName(sub)}
                                 </Link>
@@ -138,7 +127,19 @@ export default function Navbar() {
                           </div>
                         );
                       }
-                      return null;
+                      // SECTION type - USING OLD WORKING PATTERN (simple a tag)
+                      else {
+                        return (
+                          <a
+                            className="w-full capitalize px-2 py-2 rounded-md font-medium hover:bg-accent/10 hover:text-accent transition-all duration-200"
+                            key={index}
+                            href={`/#${item.name}`}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {item.name}
+                          </a>
+                        );
+                      }
                     })}
                     
                     {/* Mobile CTA Buttons */}
@@ -149,6 +150,7 @@ export default function Navbar() {
                           buttonVariants({ variant: "default" }),
                           "text-lg text-center bg-primary text-primary-foreground hover:bg-primary/90"
                         )}
+                        onClick={() => setIsOpen(false)}
                       >
                         Get Started
                       </a>
@@ -167,17 +169,13 @@ export default function Navbar() {
           )}
         </Disclosure>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu - USING OLD WORKING PATTERN */}
         <div className="hidden text-center lg:flex lg:items-center">
           <ul className="items-center justify-end flex-1 list-none lg:pt-0 lg:flex space-x-1">
             {navigationLinks.map((item, index) => (
               <li className="relative" key={index}>
-                {/* Handle section type */}
-                {item.type === "section" ? (
-                  <span className="w-full capitalize px-3 py-2 font-semibold text-muted-foreground text-sm tracking-wider">
-                    {item.name}
-                  </span>
-                ) : item.type === "page" ? (
+                {/* Page type */}
+                {item.type === "page" ? (
                   <Link
                     className="w-full capitalize px-3 py-2 font-medium rounded-md hover:text-accent transition-colors duration-200 inline-block"
                     href={`/${item.link || item.name.toLowerCase().replace(/\s+/g, '-')}`}
@@ -208,7 +206,15 @@ export default function Navbar() {
                       </NavigationMenuContent>
                     </NavigationMenuItem>
                   </NavigationMenu>
-                ) : null}
+                ) : (
+                  /* SECTION type - USING OLD WORKING PATTERN (simple a tag) */
+                  <a
+                    className="w-full capitalize px-3 py-2 font-medium rounded-md hover:text-accent transition-colors duration-200 inline-block"
+                    href={`/#${item.name}`}
+                  >
+                    {item.name}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
