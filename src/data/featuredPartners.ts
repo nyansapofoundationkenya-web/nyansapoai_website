@@ -1,3 +1,5 @@
+import link from "next/dist/client/link"
+
 // data/featuredPartners.ts
 export interface FeaturedPartner {
   id: string
@@ -117,5 +119,77 @@ export const featuredPartners: FeaturedPartner[] = [
     backgroundImageUrl: '/imgs/featured-partners/backgrounds/1.jpg',
     featuredText: 'Global Solutions Summit 2024',
     altText: 'Global Solutions Summit'
+  },
+   {
+    id: 'kajiado',
+    title: 'Kajiado County Government ',
+    link: 'https://www.kajiado.go.ke/ecd-teacher-training/',
+    imageUrl: '/imgs/featured-partners/kajiado.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/kajiado.png',
+    featuredText: 'ECD Teacher Training ',
+    altText: 'Kajiado County Government '
+  },
+  {
+    id: 'restofworld',
+    title: 'Rest of World',
+    link: 'https://restofworld.org/2025/ai-teaching-tools-kenya-teacher-shortage/',
+    imageUrl: '/imgs/featured-partners/restofworld.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/13.jpg',
+    featuredText: 'Kenya’s solution to teacher shortage: Embrace AI',
+    altText: 'Rest of World'
+  },
+  {
+    id: 'ihub',
+    title: 'Ihub',
+    link: 'https://futureoflearning.ihub.co.ke/startup-directory/nyansapo-ai/',
+    imageUrl: '/imgs/featured-partners/ihub.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/15.jpg',
+    featuredText: 'Future of Learning ',
+    altText: 'Ihub'
+  },
+  {
+    id: 'she-shapes-ai',
+    title: 'She Shapes AI',
+    link: 'https://www.sheshapes.ai/2025/26-finalists#education',
+    imageUrl: '/imgs/featured-partners/she-shapes-ai.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/she-shapes-ai.jpg',
+    featuredText: 'Meet the 2025/26 Global Awards Finalists ',
+    altText: 'She Shapes AI'
+  },
+   {
+    id: 'gaif',
+    title: 'GAIF',
+    link: 'https://www.gaif.ai/blogs/N41-nyansapo-ai-literacy-kenya',
+    imageUrl: '/imgs/featured-partners/gaif.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/gaif.jpg',
+    featuredText: 'The Algorithm of Hope: How Nyansapo AI is Cracking the Literacy Code',
+    altText: 'GAIF'
+  },
+  {
+    id: 'icu',
+    title: 'International Communication Union',
+    link: 'https://aiforgood.itu.int/empowering-african-innovators-bridging-ai-and-robotics-with-real-world-solutions/',
+    imageUrl: '/imgs/featured-partners/icu.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/icu.jpg',
+    featuredText: 'Empowering African innovators: Bridging AI and robotics with real-world solutions',
+    altText: 'International Communication Union'
+  },
+   {
+    id: 'qna',
+    title: 'Qatar News Agency',
+    link: 'https://qna.org.qa/en/news/news-details?id=wise-launches-202526-edtech-accelerator-cohort-to-transform-global-learning&date=16/09/2025',
+    imageUrl: '/imgs/featured-partners/gna.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/gna.jpg',
+    featuredText: 'WISE Launches 2025–26 Edtech Accelerator Cohort to Transform Global Learning',
+    altText: 'Qatar News Agency'
+  },
+  {
+    id: 'citizen',
+    title: 'Citizen',
+    link: 'https://www.citizen.digital/article/12-start-ups-picked-for-ihub-kenyas-third-mastercard-foundation-edtech-fellowship-n363416',
+    imageUrl: '/imgs/featured-partners/citizen.png',
+    backgroundImageUrl: '/imgs/featured-partners/backgrounds/citizen.jpg',
+    featuredText: '12 start-ups picked for iHub Kenya’s third Mastercard Foundation EdTech Fellowship',
+    altText: 'Citizen'
   },
 ]
