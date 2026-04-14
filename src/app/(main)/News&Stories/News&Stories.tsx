@@ -36,10 +36,10 @@ export default function News() {
                 className="group block flex-shrink-0 w-80 md:w-96 transition-all duration-300 hover:scale-105"
                 title={partner.title}
               >
-                {/* Card */}
-                <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  {/* Background Image Section - Taller */}
-                  <div className="relative h-56 md:h-64 overflow-hidden">
+                {/* Card - Increased overall height with min-height */}
+                <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 min-h-[450px] md:min-h-[500px] flex flex-col">
+                  {/* Background Image Section - Increased height */}
+                  <div className="relative h-80 md:h-96 overflow-hidden">
                     {partner.backgroundImageUrl ? (
                       <Image
                         src={partner.backgroundImageUrl}
@@ -53,17 +53,17 @@ export default function News() {
                     {/* Overlay for better text readability */}
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
                     
-                    {/* Featured Text */}
+                    {/* Featured Text - Increased font size */}
                     <div className="absolute inset-0 flex items-center justify-center p-6">
-                      <p className="text-white text-sm md:text-base font-semibold text-center line-clamp-3">
+                      <p className="text-white text-xl md:text-2xl font-bold text-center line-clamp-4 px-4">
                         {partner.featuredText || partner.title}
                       </p>
                     </div>
                   </div>
 
                   {/* Logo Section - Horizontal layout with "Featured in:" on left and logo on right */}
-                  <div className="p-5 flex items-center justify-between gap-4">
-                    <div className="text-xs uppercase tracking-wider text-gray-500 font-medium whitespace-nowrap">
+                  <div className="p-5 flex items-center justify-between gap-4 mt-auto">
+                    <div className="text-sm uppercase tracking-wider text-gray-500 font-semibold whitespace-nowrap">
                       Featured in:
                     </div>
                     <div className="relative h-12 w-32 flex-shrink-0">
