@@ -20,7 +20,23 @@ const reports = [
     pdfUrl: "/pdfs/EndlineReport.pdf",
     index: 1,
   },
-  // Add more reports later → they will fill the 3rd column
+  {
+    id: 3,
+    title: "Utilizing Mobile Technology as a Tool to Supplementing Literacy Education For Underserved Children in Kenya",
+    subtitle: "(2025)",
+    imageUrl: "/imgs/reports/utilising.png",
+    pdfUrl: "/pdfs/NERA Poster B_Mumbe et al.pdf",
+    index: 2,
+  },
+
+ {
+    id: 4,
+    title: "Technology Applications in Teaching at the Right Level Programs",
+    subtitle: "(2025)",
+    imageUrl: "/imgs/reports/technology.png",
+    pdfUrl: "/pdfs/Technology_Applications_in_Teaching_at_the_Right_Level_Programs (1) 2 2.pdf",
+    index: 3,
+  },
 ] as const;
 
 interface ReportsGridProps {
