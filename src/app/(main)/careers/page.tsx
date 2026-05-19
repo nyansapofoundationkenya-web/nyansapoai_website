@@ -6,10 +6,32 @@ import { ArrowRight, MapPin, ExternalLink, XCircle } from "lucide-react"
 // Define the green color
 const brandGreen = "#4caf50"
 
-export default function CareersPage() {
-  const applicationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSd8K1zfxJvw6QdhdiSRmxWEO_M5fDx6pyOJYhQ3mhaBDYMvgQ/viewform"
-  const isPositionOpen = false // Set this to false since the position is closed
+// Job listings data
+const jobs = [
+  {
+    id: "audio-annotator",
+    title: "Teacher Audio Annotator",
+    category: "AI & Data Annotation",
+    location: "Remote / Nairobi, Kenya",
+    description:
+      "We are seeking detail-oriented teachers to join our annotation team, where you will transcribe short audio recordings of children reading in English to help train and improve AI systems designed for early literacy assessment across Kenya and beyond.",
+    isOpen: true,
+    applicationUrl: "https://forms.gle/CefGwbRtkchULgds9",
+  },
+  {
+    id: "communications-lead",
+    title: "Communications and Social Media Lead",
+    category: "Marketing & Communications",
+    location: "Nairobi, Kenya / Remote",
+    description:
+      "Shape the voice of Nyansapo AI. We're looking for a creative storyteller to manage our digital presence and engage with our growing community of educators and partners.",
+    isOpen: false,
+    applicationUrl: "https://docs.google.com/forms/d/e/1FAIpQLSd8K1zfxJvw6QdhdiSRmxWEO_M5fDx6pyOJYhQ3mhaBDYMvgQ/viewform",
+  },
 
+]
+
+export default function CareersPage() {
   return (
     <main className="pt-20 bg-background">
       {/* Hero Section */}
@@ -61,7 +83,7 @@ export default function CareersPage() {
         <div className="absolute top-0 right-0 w-1/3 h-full bg-muted -z-10 translate-x-1/4 skew-x-12"></div>
       </section>
 
-      {/* Job Listings - Only Communications Role */}
+      {/* Job Listings */}
       <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-16">
@@ -72,49 +94,54 @@ export default function CareersPage() {
           </div>
 
           <div className="space-y-4">
-            {/* Communications and Social Media Lead - Position Closed */}
-            <div className="group bg-card hover:bg-accent/5 transition-all p-8 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-border opacity-80">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: brandGreen }}>
-                    Marketing &amp; Communications
-                  </span>
-                  <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                    <MapPin className="w-3 h-3" /> Nairobi, Kenya / Remote
-                  </span>
-                </div>
-                <h3 className="text-2xl font-headline font-bold mb-3 text-foreground">
-                  Communications and Social Media Lead
-                </h3>
-                <p className="text-muted-foreground line-clamp-2 max-w-2xl">
-                  Shape the voice of Nyansapo AI. We&apos;re looking for a creative storyteller to manage our digital 
-                  presence and engage with our growing community of educators and partners.
-                </p>
-                {!isPositionOpen && (
-                  <div className="mt-3">
-                    <span className="inline-flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                      <XCircle className="w-4 h-4" />
-                      This position is now closed
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                className={`group bg-card hover:bg-accent/5 transition-all p-8 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-border ${
+                  !job.isOpen ? "opacity-80" : ""
+                }`}
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <span className="text-xs font-bold uppercase tracking-widest" style={{ color: brandGreen }}>
+                      {job.category}
                     </span>
+                    <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                      <MapPin className="w-3 h-3" /> {job.location}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-headline font-bold mb-3 text-foreground">
+                    {job.title}
+                  </h3>
+                  <p className="text-muted-foreground line-clamp-2 max-w-2xl">
+                    {job.description}
+                  </p>
+                  {!job.isOpen && (
+                    <div className="mt-3">
+                      <span className="inline-flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                        <XCircle className="w-4 h-4" />
+                        This position is now closed
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {job.isOpen ? (
+                  <a
+                    href={job.applicationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 font-bold text-[#4caf50] group-hover:gap-4 transition-all"
+                  >
+                    Apply Now <ExternalLink className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-2 font-bold text-muted-foreground bg-muted px-6 py-2 rounded-lg cursor-not-allowed">
+                    <XCircle className="w-4 h-4" />
+                    Applications Closed
                   </div>
                 )}
               </div>
-              {isPositionOpen ? (
-                <a
-                  href={applicationFormUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-bold text-[#4caf50] group-hover:gap-4 transition-all"
-                >
-                  Apply Now <ExternalLink className="w-4 h-4" />
-                </a>
-              ) : (
-                <div className="flex items-center gap-2 font-bold text-muted-foreground bg-muted px-6 py-2 rounded-lg cursor-not-allowed">
-                  <XCircle className="w-4 h-4" />
-                  Applications Closed
-                </div>
-              )}
-            </div>
+            ))}
           </div>
         </div>
       </section>
