@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { google } from "googleapis"
 
-const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || "victor@nyansapoai.app"
+const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || "sieva@nyansapoai.app"
 const WORK_START_HOUR = 8   // EAT (Nairobi time)
 const WORK_END_HOUR = 17    // EAT (Nairobi time)
 
