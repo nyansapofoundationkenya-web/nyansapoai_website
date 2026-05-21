@@ -1,4 +1,3 @@
-// app/request-demo/page.tsx
 "use client"
 
 import { useState } from "react"
@@ -6,130 +5,133 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle2, Calendar, Users, User, AlertCircle } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  CheckCircle2,
+  Calendar,
+  Users,
+  User,
+  AlertCircle,
+  Loader2,
+} from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import DemoCalendar from "@/components/WeekCalendar"
+
+const ORGANIZATION_TYPES = [
+  "EdTech",
+  "Education Institution",
+  "Technology Company",
+  "Government & Policy",
+  "NGO/Non-profit",
+  "Other",
+]
+
+const ROLES = [
+  "Teacher",
+  "Founder",
+  "Director",
+  "Administrative Staff",
+  "Program Manager",
+  "Other",
+]
+
+const LANGUAGES = ["English", "Swahili"]
+
+const EMPTY_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  organizationType: "",
+  otherOrganizationType: "",
+  organizationName: "",
+  numberOfLearners: "",
+  numberOfAttendees: "",
+  roles: [] as string[],
+  otherRole: "",
+  assessmentChallenges: "",
+  preferredLanguage: "",
+  preferredDate: "",
+  preferredTime: "",
+}
 
 export default function RequestDemoPage() {
-  const [formData, setFormData] = useState({
-    // Personal Information
-    name: "",
-    email: "",
-    phone: "",
-    
-    // Organization Information
-    organizationType: "",
-    otherOrganizationType: "",
-    organizationName: "",
-    
-    // Scale Information
-    numberOfLearners: "",
-    numberOfAttendees: "",
-    
-    // Attendee Roles
-    roles: [] as string[],
-    otherRole: "",
-    
-    // Demo Details
-    assessmentChallenges: "",
-    preferredLanguage: "",
-    preferredDate: "",
-    preferredTime: ""
-  })
-
+  const [formData, setFormData] = useState(EMPTY_FORM)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value, type } = e.target
-    if (type === 'checkbox') {
+    if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        roles: checked 
+        roles: checked
           ? [...prev.roles, value]
-          : prev.roles.filter(role => role !== value)
+          : prev.roles.filter((r) => r !== value),
       }))
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }))
+      setFormData((prev) => ({ ...prev, [name]: value }))
     }
-    
-    // Clear error when user starts typing
+    if (error) setError(null)
+  }
+
+  const handleCalendarSelect = (date: string, time: string) => {
+    setFormData((prev) => ({ ...prev, preferredDate: date, preferredTime: time }))
     if (error) setError(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!formData.preferredDate || !formData.preferredTime) {
+      setError("Please select a date and time from the calendar.")
+      return
+    }
+
     setIsSubmitting(true)
     setError(null)
 
     try {
-      const response = await fetch('/api/getstarted', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("/api/getstarted", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          // Ensure otherOrganizationType is included only when "Other" is selected
-          otherOrganizationType: formData.organizationType === "Other" ? formData.otherOrganizationType : "",
-          // Ensure otherRole is included only when "Other" is selected in roles
-          otherRole: formData.roles.includes("Other") ? formData.otherRole : ""
+          otherOrganizationType:
+            formData.organizationType === "Other"
+              ? formData.otherOrganizationType
+              : "",
+          otherRole: formData.roles.includes("Other") ? formData.otherRole : "",
         }),
       })
 
       const result = await response.json()
-
       if (!response.ok) {
-        throw new Error(result.error || result.details?.[0]?.message || 'Failed to submit request')
+        throw new Error(
+          result.error || result.details?.[0]?.message || "Failed to submit request"
+        )
       }
 
       setIsSubmitted(true)
-      console.log("Demo request submitted successfully:", result)
-      
-    } catch (error: any) {
-      console.error("Error submitting demo request:", error)
-      setError(error.message || "Failed to submit request. Please try again.")
+    } catch (err: any) {
+      setError(err.message || "Failed to submit request. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const organizationTypes = [
-    "EdTech",
-    "Education Institution",
-    "Technology Company",
-    "Government & Policy",
-    "NGO/Non-profit",
-    "Other"
-  ]
-
-  const roles = [
-    "Teacher",
-    "Founder",
-    "Director",
-    "Administrative Staff",
-    "Program Manager",
-    "Other"
-  ]
-
-  const languages = [
-    "English",
-    "Swahili"
-  ]
-
-  const getTodayDate = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, '0')
-    const day = String(today.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
-
+  // ── Success screen ──────────────────────────────────────────────────────────
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted pt-24 pb-16">
@@ -139,43 +141,27 @@ export default function RequestDemoPage() {
               <div className="flex justify-center">
                 <CheckCircle2 className="h-16 w-16 text-primary" />
               </div>
-              <CardTitle className="text-3xl font-bold text-foreground">
+              <h2 className="text-3xl font-bold text-foreground">
                 Demo Request Received!
-              </CardTitle>
-              <CardDescription className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Thank you for your interest in Nyansapo AI. Our team will contact you shortly to confirm your demo schedule and discuss how we can support your assessment needs.
-              </CardDescription>
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  We&apos;ve sent a confirmation email to <strong>{formData.email}</strong> and will contact you there to confirm your preferred time.
-                </p>
-                <div className="pt-4">
-                  <Button 
-                    onClick={() => {
-                      setIsSubmitted(false)
-                      setFormData({ 
-                        name: "", 
-                        email: "", 
-                        phone: "", 
-                        organizationType: "", 
-                        otherOrganizationType: "", 
-                        organizationName: "",
-                        numberOfLearners: "", 
-                        numberOfAttendees: "",
-                        roles: [], 
-                        otherRole: "",
-                        assessmentChallenges: "", 
-                        preferredLanguage: "", 
-                        preferredDate: "", 
-                        preferredTime: ""
-                      })
-                    }}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  >
-                    Request Another Demo
-                  </Button>
-                </div>
-              </div>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Thank you for your interest in Nyansapo AI. Our team will contact
+                you shortly to confirm your demo schedule and discuss how we can
+                support your assessment needs.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                We&apos;ve sent a confirmation to{" "}
+                <strong>{formData.email}</strong>.
+              </p>
+              <Button
+                onClick={() => {
+                  setIsSubmitted(false)
+                  setFormData(EMPTY_FORM)
+                }}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                Request Another Demo
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -183,10 +169,11 @@ export default function RequestDemoPage() {
     )
   }
 
+  // ── Form ────────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted pt-24 pb-16">
       <div className="container mx-auto px-4 max-w-4xl">
-        {/* Header Section */}
+        {/* Page header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Request a Demo
@@ -201,32 +188,30 @@ export default function RequestDemoPage() {
             <CardTitle className="text-2xl font-bold text-foreground">
               Demo Request Form
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Provide your details and we&apos;ll schedule a demo tailored to your needs
+            <CardDescription>
+              Provide your details and we&apos;ll schedule a demo tailored to your
+              needs
             </CardDescription>
           </CardHeader>
+
           <CardContent>
             {error && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  {error}
-                </AlertDescription>
+                <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Personal Information */}
-              <div className="space-y-6">
+              {/* ── Personal Information ─────────────────────────────────── */}
+              <section className="space-y-6">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <User className="h-5 w-5 text-primary" />
                   Personal Information
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-foreground">
-                      Full Name *
-                    </Label>
+                    <Label htmlFor="name">Full Name *</Label>
                     <Input
                       id="name"
                       name="name"
@@ -235,15 +220,12 @@ export default function RequestDemoPage() {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Enter your full name"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-foreground">
-                      Work Email *
-                    </Label>
+                    <Label htmlFor="email">Work Email *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -252,15 +234,12 @@ export default function RequestDemoPage() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Enter your work email"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-foreground">
-                      Phone Number *
-                    </Label>
+                    <Label htmlFor="phone">Phone Number *</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -269,22 +248,21 @@ export default function RequestDemoPage() {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="Enter your phone number"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
                 </div>
-              </div>
+              </section>
 
-              {/* Organization Information */}
-              <div className="space-y-6">
+              {/* ── Organization Information ─────────────────────────────── */}
+              <section className="space-y-6">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Users className="h-5 w-5 text-primary" />
                   Organization Information
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="organizationType" className="text-foreground">
+                    <Label htmlFor="organizationType">
                       Type of Organization *
                     </Label>
                     <select
@@ -293,39 +271,38 @@ export default function RequestDemoPage() {
                       required
                       value={formData.organizationType}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-background disabled:opacity-50"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
                       disabled={isSubmitting}
                     >
                       <option value="">Select organization type</option>
-                      {organizationTypes.map(type => (
-                        <option key={type} value={type}>{type}</option>
+                      {ORGANIZATION_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   {formData.organizationType === "Other" && (
                     <div className="space-y-2">
-                      <Label htmlFor="otherOrganizationType" className="text-foreground">
+                      <Label htmlFor="otherOrganizationType">
                         Please specify *
                       </Label>
                       <Input
                         id="otherOrganizationType"
                         name="otherOrganizationType"
                         type="text"
-                        required={formData.organizationType === "Other"}
+                        required
                         value={formData.otherOrganizationType}
                         onChange={handleChange}
                         placeholder="Specify organization type"
-                        className="border-border focus:ring-primary"
                         disabled={isSubmitting}
                       />
                     </div>
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="organizationName" className="text-foreground">
-                      Organization Name *
-                    </Label>
+                    <Label htmlFor="organizationName">Organization Name *</Label>
                     <Input
                       id="organizationName"
                       name="organizationName"
@@ -334,21 +311,20 @@ export default function RequestDemoPage() {
                       value={formData.organizationName}
                       onChange={handleChange}
                       placeholder="Enter your organization name"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
                 </div>
-              </div>
+              </section>
 
-              {/* Scale Information */}
-              <div className="space-y-6">
+              {/* ── Scale Information ────────────────────────────────────── */}
+              <section className="space-y-6">
                 <h3 className="text-lg font-semibold text-foreground">
                   Scale Information
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="numberOfLearners" className="text-foreground">
+                    <Label htmlFor="numberOfLearners">
                       Number of Learners to be Supported
                     </Label>
                     <Input
@@ -358,13 +334,12 @@ export default function RequestDemoPage() {
                       value={formData.numberOfLearners}
                       onChange={handleChange}
                       placeholder="e.g., 500 learners"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="numberOfAttendees" className="text-foreground">
+                    <Label htmlFor="numberOfAttendees">
                       Number of Demo Attendees
                     </Label>
                     <Input
@@ -375,20 +350,19 @@ export default function RequestDemoPage() {
                       value={formData.numberOfAttendees}
                       onChange={handleChange}
                       placeholder="Number of people attending"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
                 </div>
-              </div>
+              </section>
 
-              {/* Attendee Roles */}
-              <div className="space-y-6">
+              {/* ── Attendee Roles ───────────────────────────────────────── */}
+              <section className="space-y-6">
                 <h3 className="text-lg font-semibold text-foreground">
                   Roles of Attendees *
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {roles.map(role => (
+                  {ROLES.map((role) => (
                     <div key={role} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
@@ -401,18 +375,14 @@ export default function RequestDemoPage() {
                         disabled={isSubmitting}
                         required={formData.roles.length === 0}
                       />
-                      <Label htmlFor={`role-${role}`} className="text-foreground">
-                        {role}
-                      </Label>
+                      <Label htmlFor={`role-${role}`}>{role}</Label>
                     </div>
                   ))}
                 </div>
-                
+
                 {formData.roles.includes("Other") && (
                   <div className="space-y-2">
-                    <Label htmlFor="otherRole" className="text-foreground">
-                      Please specify other roles
-                    </Label>
+                    <Label htmlFor="otherRole">Please specify other roles</Label>
                     <Input
                       id="otherRole"
                       name="otherRole"
@@ -420,22 +390,21 @@ export default function RequestDemoPage() {
                       value={formData.otherRole}
                       onChange={handleChange}
                       placeholder="Specify attendee roles"
-                      className="border-border focus:ring-primary"
                       disabled={isSubmitting}
                     />
                   </div>
                 )}
-              </div>
+              </section>
 
-              {/* Demo Details */}
-              <div className="space-y-6">
+              {/* ── Demo Details ─────────────────────────────────────────── */}
+              <section className="space-y-6">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary" />
                   Demo Details
                 </h3>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="assessmentChallenges" className="text-foreground">
+                  <Label htmlFor="assessmentChallenges">
                     Current Assessment Challenges
                   </Label>
                   <Textarea
@@ -445,76 +414,59 @@ export default function RequestDemoPage() {
                     value={formData.assessmentChallenges}
                     onChange={handleChange}
                     placeholder="Describe your current challenges with student assessments..."
-                    className="border-border focus:ring-primary resize-none"
+                    className="resize-none"
                     disabled={isSubmitting}
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="preferredLanguage" className="text-foreground">
-                      Preferred Demo Language *
-                    </Label>
-                    <select
-                      id="preferredLanguage"
-                      name="preferredLanguage"
-                      required
-                      value={formData.preferredLanguage}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary focus:border-transparent bg-background disabled:opacity-50"
-                      disabled={isSubmitting}
-                    >
-                      <option value="">Select language</option>
-                      {languages.map(language => (
-                        <option key={language} value={language}>{language}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="preferredDate" className="text-foreground">
-                      Preferred Date *
-                    </Label>
-                    <Input
-                      id="preferredDate"
-                      name="preferredDate"
-                      type="date"
-                      required
-                      value={formData.preferredDate}
-                      onChange={handleChange}
-                      className="border-border focus:ring-primary"
-                      disabled={isSubmitting}
-                      min={getTodayDate()}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="preferredTime" className="text-foreground">
-                      Preferred Time *
-                    </Label>
-                    <Input
-                      id="preferredTime"
-                      name="preferredTime"
-                      type="time"
-                      required
-                      value={formData.preferredTime}
-                      onChange={handleChange}
-                      className="border-border focus:ring-primary"
-                      disabled={isSubmitting}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="preferredLanguage">
+                    Preferred Demo Language *
+                  </Label>
+                  <select
+                    id="preferredLanguage"
+                    name="preferredLanguage"
+                    required
+                    value={formData.preferredLanguage}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-border rounded-md bg-background disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                    disabled={isSubmitting}
+                  >
+                    <option value="">Select language</option>
+                    {LANGUAGES.map((l) => (
+                      <option key={l} value={l}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </div>
 
-              <div className="space-y-4">
+                {/* ── Week Calendar ──────────────────────────────────────── */}
+                <div className="space-y-2">
+                  <Label>
+                    Preferred Date & Time *{" "}
+                    <span className="text-muted-foreground font-normal text-xs">
+                      (EAT — Nairobi time, Mon–Fri, 8 AM–5 PM)
+                    </span>
+                  </Label>
+                  <DemoCalendar onSelect={handleCalendarSelect} />
+                </div>
+              </section>
+
+              {/* ── Submit ───────────────────────────────────────────────── */}
+              <div className="space-y-4 pt-2">
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={
+                    isSubmitting ||
+                    !formData.preferredDate ||
+                    !formData.preferredTime
+                  }
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground mr-2" />
+                      <Loader2 className="animate-spin h-5 w-5 mr-2" />
                       Submitting Request...
                     </>
                   ) : (
@@ -523,7 +475,8 @@ export default function RequestDemoPage() {
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
-                  We&apos;ll contact you to confirm your demo schedule. By submitting, you agree to our Privacy Policy.
+                  We&apos;ll contact you to confirm your demo schedule. By
+                  submitting, you agree to our Privacy Policy.
                 </p>
               </div>
             </form>

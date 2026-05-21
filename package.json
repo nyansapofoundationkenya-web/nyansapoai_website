@@ -50,6 +50,7 @@
     "eslint-config-next": "13.4.2",
     "framer-motion": "^12.4.2",
     "get-it": "8.1.1",
+    "googleapis": "^171.4.0",
     "lodash": "4.17.21",
     "lottie-react": "2.4.0",
     "lucide-react": "0.265.0",
