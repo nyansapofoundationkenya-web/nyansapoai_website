@@ -15,7 +15,7 @@ const jobs = [
     location: "Remote / Nairobi, Kenya",
     description:
       "We are seeking detail-oriented teachers to join our annotation team, where you will transcribe short audio recordings of children reading in English to help train and improve AI systems designed for early literacy assessment across Kenya and beyond.",
-    isOpen: true,
+    isOpen: false,
     applicationUrl: "https://forms.gle/CefGwbRtkchULgds9",
   },
   {
