@@ -3,22 +3,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
 
-// Validation Schema
+// ─── Validation Schema (matches the 3-step Introduction/Needs/Solutions form) ──
 const demoRequestSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  country: z.string().min(1, "Country is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(5, "Phone number must be at least 5 characters"),
-  organizationType: z.string().min(1, "Organization type is required"),
-  otherOrganizationType: z.string().optional(),
-  organizationName: z.string().min(1, "Organization name is required"),
-  numberOfLearners: z.string().optional(),
-  numberOfAttendees: z.string().optional(),
-  roles: z.array(z.string()).min(1, "At least one role must be selected"),
-  otherRole: z.string().optional(),
-  assessmentChallenges: z.string().optional(),
-  preferredLanguage: z.string().min(1, "Preferred language is required"),
-  preferredDate: z.string().min(1, "Preferred date is required"),
-  preferredTime: z.string().min(1, "Preferred time is required")
+  entityType: z.string().min(1, "Please select what best describes you"),
+  needs: z.array(z.string()).min(1, "At least one need must be selected"),
+  solutions: z.array(z.string()).min(1, "At least one solution must be selected"),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "Consent is required to submit this request" }),
+  }),
 })
 
 // Configure Nodemailer transporter
@@ -36,66 +32,225 @@ const createTransporter = () => {
   })
 }
 
+// ─── Brand tokens (hex equivalents of your theme's --background/--accent/--primary) ─
+const BRAND = {
+  dark: '#182c49',      // ≈ hsl(216.9, 56%, 18%) — your dark-mode --background
+  blue: '#5aa2ce',       // ≈ hsl(203, 54%, 58%) — your --accent
+  yellow: '#f7cc1c',     // ≈ hsl(47.9, 95.8%, 53.1%) — your --primary
+  surface: '#fafaf5',
+  surfaceMuted: '#f1f5f9',
+  textMuted: '#4a5568',
+  border: '#e2e8f0',
+}
+
+const ENTITY_TYPE_LABELS: Record<string, string> = {
+  "School Network": "School / School Network",
+  "NGO": "NGO / Education Program",
+  "Government": "Government",
+  "Parent": "Parent / Caregiver",
+  "Other": "Other",
+}
+
+const DEMO_BOOKING_URL = 'https://calendar.app.google/Zk4SJDj6XtUtRS4H8'
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function row(label: string, value: string) {
+  return `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};font-family:Arial,sans-serif;font-size:13px;color:${BRAND.textMuted};width:180px;vertical-align:top;">${escapeHtml(label)}</td>
+      <td style="padding:10px 0;border-bottom:1px solid ${BRAND.border};font-family:Arial,sans-serif;font-size:14px;color:${BRAND.dark};font-weight:600;vertical-align:top;">${value}</td>
+    </tr>`
+}
+
+function sectionTitle(label: string) {
+  return `
+    <tr>
+      <td colspan="2" style="padding:28px 0 8px 0;font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${BRAND.blue};">
+        ${escapeHtml(label)}
+      </td>
+    </tr>`
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    
+
     // Validate request body
     const validatedData = demoRequestSchema.parse(body)
 
-    // Create email content
+    const entityTypeDisplay = ENTITY_TYPE_LABELS[validatedData.entityType] || validatedData.entityType
+
+    // ── Internal notification email ─────────────────────────────────────────
     const emailContent = `
 New Demo Request Received!
 
-Personal Information:
+Contact Information:
 --------------------
 Full Name: ${validatedData.name}
+Country: ${validatedData.country}
 Email: ${validatedData.email}
 Phone: ${validatedData.phone}
+Best Described As: ${entityTypeDisplay}
 
-Organization Information:
-------------------------
-Organization Type: ${validatedData.organizationType}${validatedData.otherOrganizationType ? ` (${validatedData.otherOrganizationType})` : ''}
-Organization Name: ${validatedData.organizationName}
-
-Scale Information:
------------------
-Number of Learners: ${validatedData.numberOfLearners || 'Not specified'}
-Number of Attendees: ${validatedData.numberOfAttendees || 'Not specified'}
-
-Attendee Roles:
---------------
-${validatedData.roles.join(', ')}${validatedData.otherRole ? `, ${validatedData.otherRole}` : ''}
-
-Demo Details:
--------------
-Assessment Challenges: ${validatedData.assessmentChallenges || 'Not specified'}
-Preferred Language: ${validatedData.preferredLanguage}
-Preferred Date: ${validatedData.preferredDate}
-Preferred Time: ${validatedData.preferredTime}
+Needs & Solutions:
+------------------
+Needs: ${validatedData.needs.join(', ')}
+Interested Solutions: ${validatedData.solutions.join(', ')}
 
 ---
 This request was submitted through the Nyansapo AI demo request form.
 `
 
-    // Create confirmation email for the user
+    const internalHtml = `
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background-color:${BRAND.surface};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.surface};padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid ${BRAND.border};max-width:600px;width:100%;">
+          <tr>
+            <td style="background-color:${BRAND.dark};padding:24px 32px;">
+              <span style="font-family:Arial,sans-serif;font-size:20px;font-weight:800;color:#ffffff;letter-spacing:-0.02em;">Nyansapo AI</span>
+              <span style="font-family:Arial,sans-serif;font-size:12px;color:${BRAND.yellow};float:right;line-height:28px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">New Demo Request</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              <h1 style="margin:0 0 4px 0;font-family:Arial,sans-serif;font-size:20px;color:${BRAND.dark};">${escapeHtml(validatedData.name)}</h1>
+              <p style="margin:0 0 16px 0;font-family:Arial,sans-serif;font-size:14px;color:${BRAND.textMuted};">${escapeHtml(entityTypeDisplay)} · ${escapeHtml(validatedData.country)}</p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                ${sectionTitle('Contact')}
+                ${row('Email', `<a href="mailto:${validatedData.email}" style="color:${BRAND.blue};text-decoration:none;">${escapeHtml(validatedData.email)}</a>`)}
+                ${row('Phone', `<a href="tel:${validatedData.phone}" style="color:${BRAND.blue};text-decoration:none;">${escapeHtml(validatedData.phone)}</a>`)}
+                ${row('Country', escapeHtml(validatedData.country))}
+                ${sectionTitle('Needs & Solutions')}
+                ${row('Needs', escapeHtml(validatedData.needs.join(', ')))}
+                ${row('Interested in', escapeHtml(validatedData.solutions.join(', ')))}
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px;background-color:${BRAND.surfaceMuted};">
+              <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:${BRAND.textMuted};">
+                Submitted through the Nyansapo AI demo request form.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+
+    // ── User confirmation email ─────────────────────────────────────────────
     const userEmailContent = `
 Dear ${validatedData.name},
 
 Thank you for requesting a demo of Nyansapo AI's assessment platform!
 
-We have received your request with the following details:
+Interested in: ${validatedData.solutions.join(', ')}
 
-Demo Details:
-- Preferred Date: ${validatedData.preferredDate}
-- Preferred Time: ${validatedData.preferredTime}
-- Language: ${validatedData.preferredLanguage}
+Our team will review your request and contact you shortly at ${validatedData.email} to discuss your specific needs.
 
-Our team will review your request and contact you shortly at ${validatedData.email} to confirm the schedule and discuss your specific needs regarding ${validatedData.assessmentChallenges ? `"${validatedData.assessmentChallenges}"` : 'student assessments'}.
+You can also book a session with us here: ${DEMO_BOOKING_URL}
 
 Best regards,
 The Nyansapo AI Team
 `
+
+    const userHtml = `
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background-color:${BRAND.surface};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.surface};padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid ${BRAND.border};max-width:600px;width:100%;">
+          <tr>
+            <td style="background-color:${BRAND.dark};padding:32px;text-align:center;">
+              <span style="font-family:Arial,sans-serif;font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.02em;">Nyansapo AI</span>
+              <p style="margin:6px 0 0 0;font-family:Arial,sans-serif;font-size:13px;color:${BRAND.yellow};font-weight:600;">AI-Powered Assessment Platform</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:36px 32px 8px 32px;">
+              <div style="width:48px;height:48px;border-radius:50%;background-color:#e8f2f8;text-align:center;line-height:48px;margin-bottom:20px;">
+                <span style="font-family:Arial,sans-serif;font-size:22px;color:${BRAND.blue};">&#10003;</span>
+              </div>
+              <h1 style="margin:0 0 12px 0;font-family:Arial,sans-serif;font-size:22px;color:${BRAND.dark};">Thanks for requesting a demo, ${escapeHtml(validatedData.name.split(' ')[0])}!</h1>
+              <p style="margin:0 0 24px 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:${BRAND.textMuted};">
+                We've received your request to explore Nyansapo AI. Here's what you shared:
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${BRAND.surfaceMuted};border-radius:10px;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px;color:${BRAND.textMuted};width:120px;">Best described as</td>
+                        <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:14px;color:${BRAND.dark};font-weight:700;">${escapeHtml(entityTypeDisplay)}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:13px;color:${BRAND.textMuted};">Interested in</td>
+                        <td style="padding:6px 0;font-family:Arial,sans-serif;font-size:14px;color:${BRAND.dark};font-weight:700;">${escapeHtml(validatedData.solutions.join(', '))}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 8px 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:${BRAND.textMuted};">
+                Our team will contact you shortly at <strong style="color:${BRAND.dark};">${escapeHtml(validatedData.email)}</strong> to discuss your needs.
+              </p>
+
+              <p style="margin:18px 0 0 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:${BRAND.textMuted};">
+                You can also book a session with us directly:
+              </p>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:12px 0 0 0;">
+                <tr>
+                  <td style="border-radius:8px;background-color:${BRAND.blue};">
+                    <a href="${DEMO_BOOKING_URL}" style="display:inline-block;padding:12px 18px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;">Book a session</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:10px 0 0 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:${BRAND.textMuted};">
+                ${DEMO_BOOKING_URL}
+              </p>
+
+              <p style="margin:24px 0 0 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:${BRAND.textMuted};">
+                Need to make a change? Just reply to this email.
+              </p>
+
+              <p style="margin:24px 0 0 0;font-family:Arial,sans-serif;font-size:14px;color:${BRAND.dark};">
+                Best regards,<br /><strong>The Nyansapo AI Team</strong>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px;background-color:${BRAND.surfaceMuted};text-align:center;">
+              <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:${BRAND.textMuted};line-height:1.6;">
+                Nyansapo Foundation Kenya<br />
+                Transforming education through AI-powered assessments
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
 
     const transporter = createTransporter()
 
@@ -104,115 +259,55 @@ The Nyansapo AI Team
       from: `"Nyansapo AI" <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
       replyTo: validatedData.email,
-      subject: `New Demo Request: ${validatedData.name} from ${validatedData.organizationName}`,
+      subject: `New Demo Request: ${validatedData.name} (${entityTypeDisplay})`,
       text: emailContent,
-      html: `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <h2 style="color: #2563eb;">New Demo Request Received!</h2>
-  
-  <h3 style="color: #4b5563;">Personal Information:</h3>
-  <p><strong>Full Name:</strong> ${validatedData.name}</p>
-  <p><strong>Email:</strong> <a href="mailto:${validatedData.email}">${validatedData.email}</a></p>
-  <p><strong>Phone:</strong> <a href="tel:${validatedData.phone}">${validatedData.phone}</a></p>
-  
-  <h3 style="color: #4b5563;">Organization Information:</h3>
-  <p><strong>Organization Type:</strong> ${validatedData.organizationType}${validatedData.otherOrganizationType ? ` (${validatedData.otherOrganizationType})` : ''}</p>
-  <p><strong>Organization Name:</strong> ${validatedData.organizationName}</p>
-  
-  <h3 style="color: #4b5563;">Scale Information:</h3>
-  <p><strong>Number of Learners:</strong> ${validatedData.numberOfLearners || 'Not specified'}</p>
-  <p><strong>Number of Attendees:</strong> ${validatedData.numberOfAttendees || 'Not specified'}</p>
-  
-  <h3 style="color: #4b5563;">Attendee Roles:</h3>
-  <p>${validatedData.roles.join(', ')}${validatedData.otherRole ? `, ${validatedData.otherRole}` : ''}</p>
-  
-  <h3 style="color: #4b5563;">Demo Details:</h3>
-  <p><strong>Assessment Challenges:</strong> ${validatedData.assessmentChallenges || 'Not specified'}</p>
-  <p><strong>Preferred Language:</strong> ${validatedData.preferredLanguage}</p>
-  <p><strong>Preferred Date:</strong> ${validatedData.preferredDate}</p>
-  <p><strong>Preferred Time:</strong> ${validatedData.preferredTime}</p>
-  
-  <hr style="border: 1px solid #e5e7eb; margin: 20px 0;">
-  <p style="color: #6b7280; font-size: 12px;">
-    This request was submitted through the Nyansapo AI demo request form.
-  </p>
-</div>
-      `,
+      html: internalHtml,
     })
 
     // Send confirmation email to the user
     await transporter.sendMail({
       from: `"Nyansapo AI" <${process.env.SMTP_USER}>`,
       to: validatedData.email,
-      subject: 'Nyansapo AI Demo Request Confirmation',
+      subject: 'Your Nyansapo AI Demo Request is Confirmed',
       text: userEmailContent,
-      html: `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="text-align: center; margin-bottom: 30px;">
-    <h1 style="color: #2563eb; margin: 0;">Nyansapo AI</h1>
-    <p style="color: #6b7280; margin: 5px 0 0 0;">AI-Powered Assessment Platform</p>
-  </div>
-  
-  <h2 style="color: #1f2937; margin-bottom: 20px;">Thank you for requesting a demo!</h2>
-  
-  <p>Dear ${validatedData.name},</p>
-  
-  <p>We have received your request for a demo of Nyansapo AI's assessment platform with the following details:</p>
-  
-  <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <p style="font-weight: bold; margin-bottom: 10px;">Demo Details:</p>
-    <ul style="list-style: none; padding: 0; margin: 0;">
-      <li style="margin-bottom: 8px;">📅 <strong>Date:</strong> ${validatedData.preferredDate}</li>
-      <li style="margin-bottom: 8px;">⏰ <strong>Time:</strong> ${validatedData.preferredTime}</li>
-      <li style="margin-bottom: 8px;">🗣️ <strong>Language:</strong> ${validatedData.preferredLanguage}</li>
-      <li style="margin-bottom: 8px;">🏢 <strong>Organization:</strong> ${validatedData.organizationName}</li>
-    </ul>
-  </div>
-  
-  <p>Our team will review your request and contact you shortly at <strong>${validatedData.email}</strong> to confirm the schedule and discuss your specific needs.</p>
-  
-  ${validatedData.assessmentChallenges ? `<p>We've noted your current challenges: <em>"${validatedData.assessmentChallenges}"</em></p>` : ''}
-  
-  <p>If you need to make any changes to your request, please don't hesitate to reply to this email.</p>
-  
-  <p>Best regards,<br>
-  <strong>The Nyansapo AI Team</strong></p>
-  
-  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-  
-  <div style="text-align: center; color: #6b7280; font-size: 12px;">
-    <p>Nyansapo Foundation Kenya<br>
-    Transforming education through AI-powered assessments</p>
-  </div>
-</div>
-      `,
+      html: userHtml,
     })
 
     return NextResponse.json(
-      { 
-        success: true, 
-        message: 'Demo request submitted successfully. Confirmation email sent.' 
+      {
+        success: true,
+        message: 'Demo request submitted successfully. Confirmation email sent.',
       },
       { status: 200 }
     )
+  } catch (error: unknown) {
+    // NOTE: never console.error(error) directly here. Nodemailer connection
+    // failures carry raw socket/TLS objects on the error, and Node's
+    // util.inspect can throw while trying to pretty-print those
+    // (TypeError: Cannot read properties of undefined (reading 'value')),
+    // which crashes this route before a response is ever sent. Log a safe,
+    // flattened shape instead.
 
-  } catch (error: any) {
-    console.error('Error submitting demo request:', error)
-    
     if (error instanceof z.ZodError) {
+      console.error('Demo request validation failed:', error.flatten())
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
-          details: error.errors 
+          details: error.errors,
         },
         { status: 400 }
       )
     }
 
+    const safeMessage = error instanceof Error ? error.message : String(error)
+    const safeStack = error instanceof Error ? error.stack : undefined
+    console.error('Error submitting demo request:', safeMessage)
+    if (safeStack) console.error(safeStack)
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to submit demo request',
-        details: error.message 
+        details: safeMessage,
       },
       { status: 500 }
     )
@@ -220,8 +315,5 @@ The Nyansapo AI Team
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { error: 'Method not allowed. Please use POST.' },
-    { status: 405 }
-  )
+  return NextResponse.json({ error: 'Method not allowed. Please use POST.' }, { status: 405 })
 }
