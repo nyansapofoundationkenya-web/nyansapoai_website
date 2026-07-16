@@ -14,7 +14,7 @@ import {
   NavigationMenuLink,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { ChevronDown, ArrowRight } from "lucide-react"; // 👈 added ArrowRight
+import { ChevronDown, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "./CTAButton";
 
@@ -31,7 +31,6 @@ export default function Navbar() {
     }
   }, [y]);
 
-  // Helper function to format display names
   const getDisplayName = (item: any) => {
     if (item.displayName) return item.displayName;
     return item.name
@@ -42,17 +41,54 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Inline style for marquee – move to globals.css or tailwind config if preferred */}
+      <style jsx>{`
+        @keyframes marquee {
+          0%   { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+          animation: marquee 25s linear infinite;
+        }
+      `}</style>
+
       {/* ========== TOP ANNOUNCEMENT BAR ========== */}
-      <div className="fixed top-0 left-0 w-full z-[60] bg-primary text-primary-foreground py-2 px-4 text-center shadow-md">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm font-medium">
-          <span>🎉 Our Holiday Programme is now open for registration!</span>
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-1 bg-blue-600 text-white px-4 py-1 rounded-full font-bold hover:bg-blue-700 transition-all shadow-sm"
-          >
-            Register Now
-            <ArrowRight className="w-4 h-4" /> {/* 👈 Lucide icon */}
-          </Link>
+      <div className="fixed top-0 left-0 w-full z-[60] bg-primary text-primary-foreground py-2 px-4 shadow-md overflow-hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 text-sm font-medium">
+          {/* Desktop layout: static text + button inline */}
+          <div className="hidden sm:flex items-center gap-4">
+            <span className="whitespace-nowrap">
+              🎉 Our Holiday Programme is now open for registration!
+            </span>
+            <Link
+              href="/register"
+              className="inline-flex items-center gap-1 bg-blue-600 text-white px-4 py-1 rounded-full font-bold hover:bg-blue-700 transition-all shadow-sm flex-shrink-0"
+            >
+              Register Now
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Mobile layout: marquee text + fixed button on the right */}
+          <div className="flex sm:hidden items-center w-full overflow-hidden">
+            <div className="relative flex-1 overflow-hidden whitespace-nowrap">
+              {/* The text moves from right to left continuously */}
+              <div className="inline-block animate-marquee">
+                <span>🎉 Our Holiday Programme is now open for registration!</span>
+                {/* Duplicate for seamless loop */}
+                <span className="ml-8">
+                  🎉 Our Holiday Programme is now open for registration!
+                </span>
+              </div>
+            </div>
+            <Link
+              href="/register"
+              className="inline-flex items-center gap-1 bg-blue-600 text-white px-4 py-1 rounded-full font-bold hover:bg-blue-700 transition-all shadow-sm flex-shrink-0 ml-2"
+            >
+              Register Now
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -63,7 +99,7 @@ export default function Navbar() {
             ? "bg-background/95 backdrop-blur-md"
             : "bg-gradient-to-b from-black/80 via-black/50 to-transparent"
         } text-foreground duration-200 left-0 z-50 shadow-sm`}
-        style={{ top: "44px" }} // adjust to match bar height
+        style={{ top: "44px" }}
       >
         <nav className="relative flex flex-wrap py-3 px-6 gap-1 items-center justify-between lg:justify-between max-w-7xl mx-auto">
           {/* Logo */}

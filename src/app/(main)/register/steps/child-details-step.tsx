@@ -32,6 +32,7 @@ export default function ChildDetailsStep({ form, childrenArray, onNext, onBack }
         </h1>
       </div>
 
+      {/* FORM – already first in the flex column, so it's on top on mobile */}
       <div className="flex flex-col gap-8 rounded-xl border border-border bg-card p-8 shadow-sm md:p-10">
         <div className="flex flex-col gap-6">
           {fields.map((field, index) => {
@@ -159,8 +160,9 @@ export default function ChildDetailsStep({ form, childrenArray, onNext, onBack }
         </div>
       </div>
 
+      {/* “Why we ask?” section – now text appears above image on mobile (text first in DOM) */}
       <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-12">
-        <div className="order-2 md:order-1 md:col-span-5">
+        <div className="md:col-span-5">
           <h3 className="mb-4 text-2xl font-bold text-primary">Why we ask?</h3>
           <p className="leading-relaxed text-muted-foreground">
             Tailoring the learning journey starts with understanding where your
@@ -169,7 +171,7 @@ export default function ChildDetailsStep({ form, childrenArray, onNext, onBack }
             overwhelmed.
           </p>
         </div>
-        <div className="order-1 md:order-2 md:col-span-7">
+        <div className="md:col-span-7">
           <div className="relative">
             <div className="absolute inset-0 -rotate-3 scale-105 rounded-3xl bg-secondary/20" />
             <img

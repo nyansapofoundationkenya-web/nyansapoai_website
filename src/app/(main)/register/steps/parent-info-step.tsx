@@ -15,8 +15,8 @@ export default function ParentInfoStep({
 
   return (
     <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 lg:grid-cols-12">
-      {/* Left: hero + info cards */}
-      <div className="flex flex-col gap-8 lg:col-span-7">
+      {/* Left: hero + info cards – now appears second on mobile, first on desktop */}
+      <div className="order-2 flex flex-col gap-8 lg:order-1 lg:col-span-7">
         <div className="relative h-[320px] overflow-hidden rounded-xl shadow-xl md:h-[400px]">
           <img
             src="imgs/gallery/2.jpg"
@@ -55,8 +55,8 @@ export default function ParentInfoStep({
         </div>
       </div>
 
-      {/* Right: form */}
-      <div className="flex flex-col gap-6 lg:col-span-5">
+      {/* Right: form – now appears first on mobile (top), second on desktop */}
+      <div className="order-1 flex flex-col gap-6 lg:order-2 lg:col-span-5">
         <div className="rounded-xl border border-border bg-card p-8 shadow-sm">
           <header className="mb-8">
             <h2 className="mb-2 text-2xl font-bold text-foreground">About You</h2>
