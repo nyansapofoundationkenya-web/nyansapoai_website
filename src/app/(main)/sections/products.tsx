@@ -18,13 +18,29 @@ export type ProductPreviewInterface = {
   }
   _id: string
   slug: { current: string }
+  externalUrl?: string
 }
 
 const projectQuery = groq`*[_type=='products']{title,summary,slug,mainImage{asset->{...,metadata{lqip,url}}}}`
 const clientFetch = cache(sanityClient.fetch.bind(sanityClient))
 
+const placeholderProduct: ProductPreviewInterface = {
+  _id: "hardcoded-nao-learn",
+  title: "Nao Learn",
+  summary:
+    "NAO Learn is a learning app that helps children develop foundational reading skills through interactive phonics activities and guided practice. Lessons are designed to match each learner's level and help children build confidence step by step.",
+  slug: { current: "" },
+  mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
+  externalUrl: "https://naolearn.nyansapoai.app/",
+}
+
 export default async function Products({}: Props) {
   const data = await clientFetch<ProductPreviewInterface[]>(projectQuery)
+
+  const paddedData =
+    data.length < 3
+      ? [...data, ...Array(3 - data.length).fill(placeholderProduct)]
+      : data
 
   return (
     <div
@@ -39,11 +55,11 @@ export default async function Products({}: Props) {
       </h4>
 
       <div className="flex flex-wrap justify-center gap-8 mt-12 sm:mt-20 max-w-6xl mx-auto">
-        {data.map((product, i) => (
+        {paddedData.slice(0, 3).map((product, i) => (
           <ProductPreview
             product={product}
             bgColor={i % 2 === 0 ? "#4caf50" : "#e67e22"}
-            key={i}
+            key={`${product._id}-${i}`}
             flexReverse={i % 2 === 0}
             index={i}
           />
@@ -66,32 +82,31 @@ const ProductPreview = ({
   bgColor,
   index,
 }: ProductPreviewProps) => {
-  // ONLY CHANGE: Use local images for the first two cards
   const imageSrc =
     index === 0
       ? "/imgs/gallery/5.jpg"
       : index === 1
       ? "/imgs/gallery/7.jpg"
-      : product.mainImage.asset.url
+      : "/imgs/gallery/6.jpg"
+
+  const isHardcoded = Boolean(product.externalUrl)
 
   return (
     <div
-      className="flex flex-col overflow-hidden rounded=xl shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 w-full max-w-sm"
+      className="flex flex-col overflow-hidden rounded-xl shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 w-full max-w-sm"
       style={{ backgroundColor: "white" }}
     >
-      {/* Image section */}
       <div className="relative w-full h-48 sm:h-56 md:h-64">
         <Image
-          src={imageSrc}                     // This line is the only change
+          src={imageSrc}
           alt={product.title}
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          priority={index < 2}               // optional: faster load for the local ones
+          priority={index < 2}
         />
       </div>
 
-      {/* Content section – unchanged */}
       <div
         style={{ backgroundColor: bgColor }}
         className="flex flex-col p-6 flex-grow"
@@ -102,12 +117,23 @@ const ProductPreview = ({
         <p className="tracking-wide text-white flex-grow mb-6">
           {product.summary}
         </p>
-        <Link
-          href={`/products/${product.slug.current}`}
-          className="inline-block py-2 px-6 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
-        >
-          Learn more
-        </Link>
+        {isHardcoded ? (
+          <a
+            href={product.externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block py-2 px-6 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
+          >
+            Learn more
+          </a>
+        ) : (
+          <Link
+            href={`/products/${product.slug.current}`}
+            className="inline-block py-2 px-6 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
+          >
+            Learn more
+          </Link>
+        )}
       </div>
     </div>
   )

@@ -24,15 +24,29 @@ export type DashboardPreviewInterface = {
 }
 
 const getStartedQuery = groq`*[_type=='products']{title,summary,slug,mainImage{asset->{...,metadata{
-  lqip, url}}}} | order(_createdAt asc) [0...2]`
+  lqip, url}}}} | order(_createdAt asc) [0...3]`
 
 const clientFetch = cache(sanityClient.fetch.bind(sanityClient))
+
+// Hardcoded fallback for the third dashboard (Nao Learn) — not in Sanity
+const placeholderDashboard: DashboardPreviewInterface = {
+  _id: "hardcoded-nao-learn",
+  title: "Nao Learn",
+  summary: "",
+  slug: { current: "nao-learn" },
+  mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
+}
 
 export default async function GetStarted({}: Props) {
   const data = await clientFetch<DashboardPreviewInterface[]>(getStartedQuery)
 
-  // If no data, render fallback (optional: handle error state)
-  if (data.length === 0) {
+  const paddedData =
+    data.length < 3
+      ? [...data, ...Array(3 - data.length).fill(placeholderDashboard)]
+      : data
+
+  // If no data at all, render fallback (optional: handle error state)
+  if (paddedData.length === 0) {
     return (
       <div className="py-12 px-4 sm:px-8 md:px-16 xl:px-32 2xl:px-64 bg-[#fbfbfb] text-gray-800 min-h-screen">
         <p className="text-center text-lg">Loading dashboards...</p>
@@ -53,11 +67,11 @@ export default async function GetStarted({}: Props) {
       </h4>
       {/* Flex layout with centering and spacing */}
       <div className="flex flex-wrap justify-center gap-8 mt-12 sm:mt-20 max-w-6xl mx-auto">
-        {data.map((dashboard, i) => (
+        {paddedData.slice(0, 3).map((dashboard, i) => (
           <DashboardPreview
             dashboard={dashboard}
             bgColor={i % 2 === 0 ? "#4caf50" : "#e67e22"}
-            key={dashboard._id}
+            key={`${dashboard._id}-${i}`}
             index={i}
           />
         ))}
@@ -73,13 +87,15 @@ type DashboardPreviewProps = {
 }
 
 const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) => {
-  // Map index to external Vercel URL (assumes first product = Nyansapo, second = Hekima)
+  // Map index to external Vercel URLs (first = Nyansapo, second = Hekima, third = Nao Learn)
   const getExternalUrl = (idx: number) => {
     switch (idx) {
       case 0:
         return "https://nyansapofoundation-teaching-dashboa.vercel.app/"
       case 1:
-        return "https://hekima-dashboard-pi.vercel.app/"
+        return "https://hekima-app.vercel.app/"
+      case 2:
+        return "https://naolearn.nyansapoai.app/"
       default:
         return "#"
     }
@@ -98,7 +114,13 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
         return {
           title: "Hekima Learning Dashboard",
           summary:
-            "Hekima Learning helps teachers identify learning gaps, group students based on their needs, and adjust instruction."
+            " Hekima helps young children build strong reading foundations through fun, interactive sound activities. Designed for PP1, PP2, and early primary learners, it supports learning both at school with teachers and at home with parents."
+        }
+      case 2:
+        return {
+          title: "Nao Learn",
+          summary:
+            "NAO Learn is a learning app that helps children develop foundational reading skills through interactive phonics activities and guided practice. Lessons are designed to match each learner's level and help children build confidence step by step."
         }
       default:
         return {
@@ -116,7 +138,7 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
       className="flex flex-col overflow-hidden rounded-xl shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 w-full max-w-sm"
       style={{ backgroundColor: "white" }}
     >
-      {/* Image section – now uses local static images */}
+      {/* Image section – uses local static images */}
       <div className="relative w-full h-48 sm:h-56 md:h-64">
         <Image
           src={index === 0 ? "/imgs/gallery/4.jpg" : "/imgs/gallery/3.jpg"}
