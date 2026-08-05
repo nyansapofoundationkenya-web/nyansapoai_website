@@ -87,18 +87,18 @@ const CurriculumHero = ({ product }: ProductProps) => {
               onClick={() => {
                 if (product.slug?.current === "nyansapo-ai-android-app") {
                   window.open(
-                    "https://nyansapofoundation-teaching-dashboa.vercel.app/",
+                    "https://play.google.com/store/apps/details?id=com.nyansapoai.naoassessment",
                     "_blank"
                   )
                 } else {
                   window.open(
-                    "https://hekima-dashboard-pi.vercel.app/",
+                    "https://play.google.com/store/apps/details?id=com.nyansapo_foundation.hekimaapp",
                     "_blank"
                   )
                 }
               }}
             >
-              Learn More
+              Get Started
             </button>
           </div>
 

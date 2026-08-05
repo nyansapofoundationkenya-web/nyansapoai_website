@@ -34,8 +34,39 @@ const placeholderProduct: ProductPreviewInterface = {
   externalUrl: "https://naolearn.nyansapoai.app/",
 }
 
+// Mock products for local development when Sanity isn't reachable.
+const mockProducts: ProductPreviewInterface[] = [
+  {
+    _id: "mock-1",
+    title: "Reading Assessment Tool",
+    summary:
+      "A quick, standards-aligned assessment that helps teachers pinpoint each student's reading level in minutes, not hours.",
+    slug: { current: "reading-assessment-tool" },
+    mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
+  },
+  {
+    _id: "mock-2",
+    title: "Classroom Insights Dashboard",
+    summary:
+      "Turn raw assessment data into clear, actionable insights teachers can use to group students and plan targeted instruction.",
+    slug: { current: "classroom-insights-dashboard" },
+    mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
+  },
+  placeholderProduct,
+]
+
+async function getProducts(): Promise<ProductPreviewInterface[]> {
+  try {
+    const data = await clientFetch<ProductPreviewInterface[]>(projectQuery)
+    if (data && data.length > 0) return data
+  } catch (err) {
+    console.warn("Sanity fetch failed, falling back to mock data:", err)
+  }
+  return mockProducts
+}
+
 export default async function Products({}: Props) {
-  const data = await clientFetch<ProductPreviewInterface[]>(projectQuery)
+  const data = await getProducts()
 
   const paddedData =
     data.length < 3
@@ -55,15 +86,28 @@ export default async function Products({}: Props) {
       </h4>
 
       <div className="flex flex-wrap justify-center gap-8 mt-12 sm:mt-20 max-w-6xl mx-auto">
-        {paddedData.slice(0, 3).map((product, i) => (
-          <ProductPreview
-            product={product}
-            bgColor={i % 2 === 0 ? "#4caf50" : "#e67e22"}
-            key={`${product._id}-${i}`}
-            flexReverse={i % 2 === 0}
-            index={i}
-          />
-        ))}
+        {paddedData.slice(0, 3).map((product, i) => {
+          const isNaoLearn =
+            product.title.toLowerCase().includes("nao") ||
+            product.slug.current?.toLowerCase().includes("nao-learn") ||
+            product._id === "hardcoded-nao-learn"
+
+          const bgColor = isNaoLearn
+            ? "#5aa2ce" // blue for Nao Learn
+            : i % 2 === 0
+            ? "#4caf50" // green for even index
+            : "#e67e22" // orange for odd index
+
+          return (
+            <ProductPreview
+              product={product}
+              bgColor={bgColor}
+              key={`${product._id}-${i}`}
+              flexReverse={i % 2 === 0}
+              index={i}
+            />
+          )
+        })}
       </div>
     </div>
   )

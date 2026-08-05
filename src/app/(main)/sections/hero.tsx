@@ -24,7 +24,6 @@ const carouselImgs = [
   { src: "/imgs/hero/background/bg2.webp", alt: "Hero Background" },
   { src: "/imgs/hero/background/bg1.webp", alt: "Hero Background" },
 ]
-
 export default function Hero({}: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [prevIndex, setPrevIndex] = useState<number | null>(null)

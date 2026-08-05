@@ -45,7 +45,6 @@ export default async function GetStarted({}: Props) {
       ? [...data, ...Array(3 - data.length).fill(placeholderDashboard)]
       : data
 
-  // If no data at all, render fallback (optional: handle error state)
   if (paddedData.length === 0) {
     return (
       <div className="py-12 px-4 sm:px-8 md:px-16 xl:px-32 2xl:px-64 bg-[#fbfbfb] text-gray-800 min-h-screen">
@@ -65,12 +64,17 @@ export default async function GetStarted({}: Props) {
       <h4 className="text-xl sm:text-3xl text-center mb-12 sm:mb-20">
         Access our teaching and learning dashboards
       </h4>
-      {/* Flex layout with centering and spacing */}
       <div className="flex flex-wrap justify-center gap-8 mt-12 sm:mt-20 max-w-6xl mx-auto">
         {paddedData.slice(0, 3).map((dashboard, i) => (
           <DashboardPreview
             dashboard={dashboard}
-            bgColor={i % 2 === 0 ? "#4caf50" : "#e67e22"}
+            bgColor={
+              i === 2
+                ? "#5aa2ce"                          // <-- Nao Learn gets blue
+                : i % 2 === 0
+                ? "#4caf50"                          // <-- green for even
+                : "#e67e22"                          // <-- orange for odd
+            }
             key={`${dashboard._id}-${i}`}
             index={i}
           />
@@ -87,13 +91,12 @@ type DashboardPreviewProps = {
 }
 
 const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) => {
-  // Map index to external Vercel URLs (first = Nyansapo, second = Hekima, third = Nao Learn)
   const getExternalUrl = (idx: number) => {
     switch (idx) {
       case 0:
-        return "https://nyansapofoundation-teaching-dashboa.vercel.app/"
+        return "https://play.google.com/store/apps/details?id=com.nyansapoai.naoassessment"
       case 1:
-        return "https://hekima-app.vercel.app/"
+        return "https://play.google.com/store/apps/details?id=com.nyansapo_foundation.hekimaapp"
       case 2:
         return "https://naolearn.nyansapoai.app/"
       default:
@@ -101,7 +104,6 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
     }
   }
 
-  // Custom content based on index (overrides Sanity data)
   const getCustomContent = (idx: number) => {
     switch (idx) {
       case 0:
@@ -138,7 +140,6 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
       className="flex flex-col overflow-hidden rounded-xl shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 w-full max-w-sm"
       style={{ backgroundColor: "white" }}
     >
-      {/* Image section – uses local static images */}
       <div className="relative w-full h-48 sm:h-56 md:h-64">
         <Image
           src={index === 0 ? "/imgs/gallery/4.jpg" : "/imgs/gallery/3.jpg"}
@@ -146,11 +147,10 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          priority // optional – improves LCP for the first two cards
+          priority
         />
       </div>
 
-      {/* Content section – uses custom title/summary */}
       <div
         style={{ backgroundColor: bgColor }}
         className="flex flex-col p-6 flex-grow"
@@ -159,7 +159,6 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
           {title}
         </h1>
         <p className="tracking-wide text-white flex-grow mb-6">{summary}</p>
-        {/* Start Button */}
         <a
           href={externalUrl}
           target="_blank"
