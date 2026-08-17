@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
   // .create() throws if the doc already exists, so this is atomic —
   // no race condition between "check" and "write".
   // -----------------------------------------
-  const docRef = adminDb.collection("parents").doc(fullPhone)
+  const docRef = adminDb.collection("parent").doc(fullPhone)
 
   try {
     await docRef.create({

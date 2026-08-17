@@ -1,4 +1,5 @@
 import Navbar from "./navbar"
+import AnnouncementBar from "./components/AnnouncementBar"
 import "@/app/globals.css"
 import "@fortawesome/fontawesome-free/css/all.min.css"
 import { Raleway } from "next/font/google"
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="dark relative bg-background duration-400">
         <RootProviders>
           <Toaster />
+          <AnnouncementBar />
           <Navbar />
           <Alert />
           {children}
