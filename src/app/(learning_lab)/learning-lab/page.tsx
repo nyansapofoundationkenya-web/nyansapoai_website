@@ -1,8 +1,21 @@
+import HeroSection from "@/components/learning-lab/hero-section";
+import AboutSection from "@/components/learning-lab/about-section";
+import ProblemSection from "@/components/learning-lab/problem-section";
+import ProcessSection from "@/components/learning-lab/process-section";
+import EvidenceSection from "@/components/learning-lab/evidence-section";
+import EcosystemSection from "@/components/learning-lab/ecosystem-section";
+import FooterSection from "@/components/learning-lab/footer-section";
+
 export default function LearningLabHome() {
   return (
-    <main className="max-w-7xl mx-auto px-6 py-16">
-      <h1 className="text-4xl font-bold">Learning Lab</h1>
-      <p className="text-muted-foreground mt-2">Coming soon.</p>
+    <main>
+      <HeroSection />
+      <AboutSection />
+      <ProblemSection />
+      <ProcessSection />
+      <EvidenceSection />
+      <EcosystemSection />
+      <FooterSection />
     </main>
   );
 }
