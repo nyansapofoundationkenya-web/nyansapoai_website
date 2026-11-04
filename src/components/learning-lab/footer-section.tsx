@@ -2,10 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 const footerLinks = [
-  { label: "Contact", href: "/learning-lab/contact" },
+  { label: "Contact", href: "/contact" },
   { label: "Stories & Insights", href: "/learning-lab/stories" },
   { label: "Reports", href: "/learning-lab/reports" },
-  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Privacy Policy", href: "https://nyansapoai.notion.site/Privacy-Policy-dc8bf36b989140b88bc0c34329a27be6" }, // fixed URL
 ];
 
 export default function FooterSection() {
@@ -36,11 +36,25 @@ export default function FooterSection() {
             <span>© 2024 Nyansapo Learning Lab | Kitui East, Kenya</span>
           </div>
           <div className="flex space-x-4">
-            {footerLinks.map((link) => (
-              <Link key={link.label} href={link.href} className="transition-colors hover:text-white">
-                {link.label}
-              </Link>
-            ))}
+            {footerLinks.map((link) => {
+              // Only the Privacy Policy is external (starts with http)
+              const isExternal = link.href.startsWith("http");
+              return isExternal ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-white"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.label} href={link.href} className="transition-colors hover:text-white">
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
