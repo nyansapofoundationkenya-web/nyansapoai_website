@@ -89,7 +89,7 @@ const APPS: AppInfo[] = [
       "Zero internet required after initial download",
     ],
     href: `${PLAY}com.nyansapo_foundation.hekimaapp`,
-    image: "/images/parents/hekima.png",
+    image: "/images/parents/hekima.webp",
     icon: BookOpen,
   },
   {
@@ -109,7 +109,7 @@ const APPS: AppInfo[] = [
       "Weekly diagnostic homework sync for Kenyan classrooms",
     ],
     href: `${PLAY}com.nyansapoai.stadiLearn`,
-    image: "/images/parents/stadi.png",
+    image: "/images/parents/stadi.webp",
     icon: BadgeCheck,
   },
   {
@@ -128,7 +128,7 @@ const APPS: AppInfo[] = [
       "Available in English & Kiswahili",
     ],
     href: `${PLAY}com.nyansapoai.naoassessment`,
-    image: "/images/parents/stadi.png",
+    image: "/images/parents/nao.jpg",
     icon: ClipboardCheck,
   },
 ]
