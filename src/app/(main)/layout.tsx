@@ -76,7 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="dark relative bg-background duration-400">
         <RootProviders>
           <Toaster />
-          <AnnouncementBar />
+          {/* <AnnouncementBar /> */}
           <Navbar />
           <Alert />
           {children}
