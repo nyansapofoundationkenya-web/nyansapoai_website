@@ -345,7 +345,7 @@ function VideoBlock() {
       <video
         ref={ref}
         className="h-full w-full object-cover"
-        src="/images/parents/parents-demo.mp4#t=0.1"
+        src="/videos/parents-demo.mp4#t=0.1"
         playsInline
         preload="metadata"
         controls={playing}
