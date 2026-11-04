@@ -4,7 +4,7 @@ import Script from "next/script"
 import RootProviders from "../providers"
 
 export const metadata: Metadata = {
-  title: "Is your child reading at their level? | Nyansapo AI",
+  title: "Is your child learning at their level? | Nyansapo AI",
   description:
     "Free reading check and fun offline lessons for Kenyan parents. English & Kiswahili, aligned to the CBC.",
 }

@@ -426,7 +426,7 @@ export default function ParentsPage() {
             <h1
               className={`${heading} mt-1 text-[32px] font-extrabold leading-[38px] tracking-tight lg:text-[48px] lg:leading-[56px]`}
             >
-              Is your child reading at their level?
+              Is your child learning at their level?
             </h1>
             <p className="text-base text-[#3e4946] lg:text-lg">
               Find out in minutes, then help them improve with fun lessons at home.
