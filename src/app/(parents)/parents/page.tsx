@@ -328,12 +328,16 @@ function AppCard({ app }: { app: AppInfo }) {
 function VideoBlock() {
   const ref = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
+  const [error, setError] = useState(false)
 
-  const toggle = () => {
+  const start = async () => {
     const v = ref.current
     if (!v) return
-    if (v.paused) v.play()
-    else v.pause()
+    try {
+      await v.play()
+    } catch {
+      setError(true)
+    }
   }
 
   return (
@@ -341,20 +345,19 @@ function VideoBlock() {
       <video
         ref={ref}
         className="h-full w-full object-cover"
-        poster="/images/parents/video-poster.png"
+        src="/images/parents/parents-demo.mp4#t=0.1"
         playsInline
         preload="metadata"
         controls={playing}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => setPlaying(false)}
-      >
-        <source src="/videos/parents-demo.mp4" type="video/mp4" />
-      </video>
-      {!playing && (
+        onError={() => setError(true)}
+      />
+      {!playing && !error && (
         <button
           type="button"
-          onClick={toggle}
+          onClick={start}
           aria-label="Play video"
           className="absolute inset-0 flex items-center justify-center bg-[#181d1c]/30 transition-colors hover:bg-[#181d1c]/40"
         >
@@ -363,10 +366,14 @@ function VideoBlock() {
           </span>
         </button>
       )}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#181d1c]/70 p-4 text-center text-sm text-white">
+          Sorry, this video couldn&apos;t be loaded. Please try again later.
+        </div>
+      )}
     </div>
   )
 }
-
 function FaqItem({
   q,
   a,
