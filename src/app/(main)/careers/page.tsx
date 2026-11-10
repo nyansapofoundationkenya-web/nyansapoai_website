@@ -8,7 +8,18 @@ const brandGreen = "#4caf50"
 
 // Job listings data
 const jobs = [
+
   {
+    id: "maths-content-reviewer",
+    title: "Maths Content Reviewer (Teacher)",
+    category: "Education & Curriculum",
+    location: "Remote",
+    description:
+      "We are looking for experienced primary school maths teachers to review lessons, practice activities and assessment questions against the Kenyan Competency-Based Curriculum and KICD curriculum designs, ensuring every item is mathematically correct and age-appropriate for the children who use our apps.",
+    isOpen: true,
+    applicationUrl: "https://forms.gle/WSrDcjCHsGbXQ1YRA",
+  },
+    {
     id: "audio-annotator",
     title: "Teacher Audio Annotator",
     category: "AI & Data Annotation",
