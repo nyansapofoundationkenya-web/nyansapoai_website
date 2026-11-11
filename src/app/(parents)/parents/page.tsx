@@ -90,7 +90,7 @@ const APPS: AppInfo[] = [
     ageIcon: Baby,
     verifiedBadge: "Playgroup to PP2",
     short: "Daily reading & phonics practice without internet.",
-    size: "22MB",
+    size: "",
     description:
       "Daily reading and maths practice your child will enjoy. Bite-sized interactive lessons with friendly audio guidance in both language and maths.",
     features: [
@@ -99,7 +99,7 @@ const APPS: AppInfo[] = [
       "Zero internet required after initial download",
     ],
     href: `${PLAY}com.nyansapo_foundation.hekimaapp`,
-    image: "/images/parents/hekima.webp",
+    image: "/images/parents/hekima.JPG",
     icon: BookOpen,
   },
   {
@@ -110,7 +110,7 @@ const APPS: AppInfo[] = [
     ageIcon: GraduationCap,
     verifiedBadge: "CBC aligned",
     short: "CBC reading comprehension & foundational numeracy.",
-    size: "24MB",
+    size: "",
     description:
       "Lessons that follow the official CBC curriculum for Grades 1–3. Helps parents support school homework with real, classroom-tested exercises.",
     features: [
@@ -119,7 +119,7 @@ const APPS: AppInfo[] = [
       "Weekly diagnostic homework sync for Kenyan classrooms",
     ],
     href: `${PLAY}com.nyansapoai.stadiLearn`,
-    image: "/images/parents/stadi.webp",
+    image: "/images/parents/stadi.JPG",
     icon: BadgeCheck,
   },
 ]

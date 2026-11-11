@@ -19,38 +19,80 @@ export type ProductPreviewInterface = {
   _id: string
   slug: { current: string }
   externalUrl?: string
+  playStoreUrl?: string
 }
+
+/* ------------------------------------------------------------------ */
+/* Google Play logo (lucide has no brand icons)                        */
+/* ------------------------------------------------------------------ */
+function PlayStoreIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path
+        fill="#00A0FF"
+        d="M3.6 2.4 14 12 3.6 21.6c-.4-.2-.6-.6-.6-1.1V3.5c0-.5.2-.9.6-1.1Z"
+      />
+      <path
+        fill="#00E676"
+        d="M4 2.2 14 12l3.2-3.2L5.4 2.3c-.5-.2-1-.2-1.4-.1Z"
+      />
+      <path
+        fill="#FF3D00"
+        d="M4 21.8 14 12l3.2 3.2-11.8 6.5c-.5.2-1 .2-1.4.1Z"
+      />
+      <path
+        fill="#FFD600"
+        d="m17.2 8.8 3.2 1.8c.8.5.8 1.9 0 2.4l-3.2 2.2L14 12l3.2-3.2Z"
+      />
+    </svg>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Play Store URLs (matching the parents page)                         */
+/* ------------------------------------------------------------------ */
+const PLAY = "https://play.google.com/store/apps/details?id="
+const TRACK = "&pcampaignid=web_share"
+
+const PLAY_STORE_URLS = {
+  nao: `${PLAY}com.nyansapoai.naoassessment${TRACK}`,
+  stadi: `${PLAY}com.nyansapoai.stadiLearn${TRACK}`,
+  hekima: `${PLAY}com.nyansapo_foundation.hekimaapp${TRACK}`,
+} as const
 
 const projectQuery = groq`*[_type=='products']{title,summary,slug,mainImage{asset->{...,metadata{lqip,url}}}}`
 const clientFetch = cache(sanityClient.fetch.bind(sanityClient))
 
 const placeholderProduct: ProductPreviewInterface = {
-  _id: "hardcoded-nao-learn",
-  title: "Nao Learn",
+  _id: "hardcoded-stadi-learn",
+  title: "Stadi Learn",
   summary:
-    "NAO Learn is a learning app that helps children develop foundational reading skills through interactive phonics activities and guided practice. Lessons are designed to match each learner's level and help children build confidence step by step.",
+    "Stadi Learn is a learning app that helps children develop foundational reading skills through interactive phonics activities and guided practice. Lessons are designed to match each learner's level and help children build confidence step by step.",
   slug: { current: "" },
   mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
   externalUrl: "https://naolearn.nyansapoai.app/",
+  playStoreUrl: PLAY_STORE_URLS.stadi,
 }
 
 // Mock products for local development when Sanity isn't reachable.
 const mockProducts: ProductPreviewInterface[] = [
   {
     _id: "mock-1",
-    title: "Reading Assessment Tool",
+    title: "NAO Assessment",
     summary:
       "A quick, standards-aligned assessment that helps teachers pinpoint each student's reading level in minutes, not hours.",
     slug: { current: "reading-assessment-tool" },
     mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
+    playStoreUrl: PLAY_STORE_URLS.nao,
   },
   {
     _id: "mock-2",
-    title: "Classroom Insights Dashboard",
+    title: "Hekima Learning",
     summary:
-      "Turn raw assessment data into clear, actionable insights teachers can use to group students and plan targeted instruction.",
-    slug: { current: "classroom-insights-dashboard" },
+      "Daily phonics and foundational numeracy practice with friendly bilingual audio guidance — works completely offline after download.",
+    slug: { current: "hekima-learning" },
     mainImage: { asset: { metadata: { lqip: "" }, url: "" } },
+    playStoreUrl: PLAY_STORE_URLS.hekima,
   },
   placeholderProduct,
 ]
@@ -135,6 +177,16 @@ const ProductPreview = ({
 
   const isHardcoded = Boolean(product.externalUrl)
 
+  // Fallback by title match so any product without an explicit URL still gets a correct download link
+  const downloadUrl =
+    product.playStoreUrl ??
+    (product.title.toLowerCase().includes("hekima")
+      ? PLAY_STORE_URLS.hekima
+      : product.title.toLowerCase().includes("nao") ||
+        product.title.toLowerCase().includes("assessment")
+      ? PLAY_STORE_URLS.nao
+      : PLAY_STORE_URLS.stadi)
+
   return (
     <div
       className="flex flex-col overflow-hidden rounded-xl shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 w-full max-w-sm"
@@ -161,23 +213,39 @@ const ProductPreview = ({
         <p className="tracking-wide text-white flex-grow mb-6">
           {product.summary}
         </p>
-        {isHardcoded ? (
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          {isHardcoded ? (
+            <a
+              href={product.externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 inline-flex min-h-[44px] items-center justify-center py-2 px-4 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
+            >
+              Learn more
+            </a>
+          ) : (
+            <Link
+              href={`/products/${product.slug.current}`}
+              className="flex-1 inline-flex min-h-[44px] items-center justify-center py-2 px-4 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
+            >
+              Learn more
+            </Link>
+          )}
+
           <a
-            href={product.externalUrl}
+            href={downloadUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block py-2 px-6 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
+            aria-label={`Download ${product.title} on Google Play`}
+            className="flex-1 inline-flex min-h-[44px] items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#142848] text-white font-bold hover:bg-[#1d3a66] transition-colors duration-200 text-center"
           >
-            Learn more
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white">
+              <PlayStoreIcon className="h-4 w-4" />
+            </span>
+            Download
           </a>
-        ) : (
-          <Link
-            href={`/products/${product.slug.current}`}
-            className="inline-block py-2 px-6 rounded-md bg-white text-gray-800 font-medium hover:bg-gray-100 transition-colors duration-200 text-center"
-          >
-            Learn more
-          </Link>
-        )}
+        </div>
       </div>
     </div>
   )

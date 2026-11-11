@@ -120,9 +120,9 @@ const DashboardPreview = ({ dashboard, bgColor, index }: DashboardPreviewProps) 
         }
       case 2:
         return {
-          title: "Nao Learn",
+          title: "Stadi Learn",
           summary:
-            "NAO Learn is a learning app that helps children develop foundational reading skills through interactive phonics activities and guided practice. Lessons are designed to match each learner's level and help children build confidence step by step."
+            "Stadi Learn is a learning app that helps children develop foundational reading skills through interactive phonics activities and guided practice. Lessons are designed to match each learner's level and help children build confidence step by step."
         }
       default:
         return {
